@@ -1,0 +1,12 @@
+{
+  "name": "fire-raycast",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "FireRaycast": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

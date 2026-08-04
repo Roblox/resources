@@ -1,0 +1,12 @@
+{
+  "name": "purchase-handling-example",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "PurchaseHandlingExample": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

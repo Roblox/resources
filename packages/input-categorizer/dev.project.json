@@ -1,0 +1,12 @@
+{
+  "name": "input-categorizer",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "InputCategorizer": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

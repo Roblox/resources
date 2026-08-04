@@ -1,0 +1,41 @@
+{
+  "attributes": {
+    "Ambient": {
+      "Color3": [
+        0.27450982,
+        0.27450982,
+        0.27450982
+      ]
+    },
+    "Brightness": 1.909999966621399,
+    "ClockTime": 21.200000762939453,
+    "ColorShift_Bottom": {
+      "Color3": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "ColorShift_Top": {
+      "Color3": [
+        0.7411765,
+        0.83921576,
+        0.97647065
+      ]
+    },
+    "EnvironmentDiffuseScale": 1.0,
+    "EnvironmentSpecularScale": 1.0,
+    "ExposureCompensation": 0.0,
+    "GeographicLatitude": 0.0,
+    "GlobalShadows": true,
+    "OutdoorAmbient": {
+      "Color3": [
+        0.5176471,
+        0.5058824,
+        0.7254902
+      ]
+    },
+    "ShadowSoftness": 0.20000000298023224
+  },
+  "className": "Configuration"
+}

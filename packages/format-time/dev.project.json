@@ -1,0 +1,12 @@
+{
+  "name": "format-time",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "FormatTime": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

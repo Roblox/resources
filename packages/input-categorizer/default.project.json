@@ -1,0 +1,7 @@
+{
+  "name": "InputCategorizer",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

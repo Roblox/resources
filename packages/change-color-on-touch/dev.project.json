@@ -1,0 +1,12 @@
+{
+  "name": "change-color-on-touch",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "ChangeColorOnTouch": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

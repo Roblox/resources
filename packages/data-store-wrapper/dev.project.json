@@ -1,0 +1,12 @@
+{
+  "name": "data-store-wrapper",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "DataStoreWrapper": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

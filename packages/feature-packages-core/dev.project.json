@@ -1,0 +1,12 @@
+{
+  "name": "feature-packages-core-dev",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "FeaturePackagesCore": {
+        "$path": "src",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

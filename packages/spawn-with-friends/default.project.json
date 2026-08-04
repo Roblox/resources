@@ -1,0 +1,11 @@
+{
+  "name": "SpawnWithFriends",
+  "tree": {
+    "$path": "src",
+    "Packages": {
+      "$path": "Packages",
+      "Cryo": { "$path": "../dev-modules-shared/src/Cryo" },
+      "TeleportToPlayer": { "$path": "../dev-modules-shared/src/TeleportToPlayer/src" }
+    }
+  }
+}

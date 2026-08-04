@@ -1,0 +1,12 @@
+{
+  "name": "playing-an-animation",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "PlayingAnAnimation": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

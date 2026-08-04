@@ -1,0 +1,12 @@
+{
+  "name": "retry-async",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "RetryAsync": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

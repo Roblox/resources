@@ -1,0 +1,12 @@
+{
+  "name": "crossfade-sounds",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "CrossfadeSounds": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

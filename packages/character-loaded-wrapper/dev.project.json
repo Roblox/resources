@@ -1,0 +1,12 @@
+{
+  "name": "character-loaded-wrapper",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "CharacterLoadedWrapper": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

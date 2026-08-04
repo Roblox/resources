@@ -1,0 +1,12 @@
+{
+  "name": "leader-election",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "LeaderElection": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

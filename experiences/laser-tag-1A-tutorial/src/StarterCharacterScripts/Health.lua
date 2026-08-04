@@ -1,0 +1,1 @@
+-- The presence of this script disables Roblox's default humanoid health regeneration

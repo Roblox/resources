@@ -1,0 +1,12 @@
+{
+  "name": "tweening-a-model",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "TweeningAModel": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

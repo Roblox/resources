@@ -1,0 +1,12 @@
+{
+  "name": "isometric-camera",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "IsometricCamera": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

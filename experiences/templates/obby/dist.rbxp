@@ -1,0 +1,70 @@
+{
+  "fileVersion": 1,
+  "placeFile": "template.rbxl",
+  "instanceHierarchy": {
+    "name": "obby",
+    "tree": {
+      "$className": "DataModel",
+      "AvatarSettings": {
+        "$className": "AvatarSettings",
+        "DefaultAvatarRules": {
+          "$className": "AvatarRules",
+          "AvatarAbilityRules": {
+            "$className": "AvatarAbilityRules",
+            "$properties": {
+              "CharacterControllerMode": 1
+            }
+          },
+          "AvatarAccessoryRules": {
+            "$className": "AvatarAccessoryRules"
+          },
+          "AvatarAnimationRules": {
+            "$className": "AvatarAnimationRules"
+          },
+          "AvatarBodyRules": {
+            "$className": "AvatarBodyRules"
+          },
+          "AvatarClothingRules": {
+            "$className": "AvatarClothingRules"
+          },
+          "AvatarCollisionRules": {
+            "$className": "AvatarCollisionRules"
+          }
+        }
+      },
+      "ServerScriptService": {
+        "$className": "ServerScriptService",
+        "$path": "src/server-script-service"
+      },
+      "StarterPlayer": {
+        "$className": "StarterPlayer",
+        "$properties": {
+				  "AvatarJointUpgrade": 2,
+          "CharacterBreakJointsOnDeath": false
+        },
+        "StarterPlayerScripts": {
+          "$className": "StarterPlayerScripts",
+          "$path": "src/starter-player-scripts"
+        }
+      },
+      "SoundService": {
+        "$className": "SoundService",
+        "$properties": {
+          "DefaultListenerLocation": 3
+        }
+      },
+      "TextChatService": {
+        "$className": "TextChatService",
+        "$properties": {
+          "IsLegacyChatDisabled": true
+        }
+      },
+      "VoiceChatService": {
+        "$className": "VoiceChatService",
+        "$properties": {
+          "UseAudioApi": 2
+        }
+      }
+    }
+  }
+}

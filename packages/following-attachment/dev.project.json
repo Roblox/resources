@@ -1,0 +1,12 @@
+{
+  "name": "following-attachment",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "FollowingAttachment": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

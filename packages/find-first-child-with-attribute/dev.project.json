@@ -1,0 +1,12 @@
+{
+  "name": "find-first-child-with-attribute",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "FindFirstChildWithAttribute": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

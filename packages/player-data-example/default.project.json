@@ -1,0 +1,7 @@
+{
+  "name": "PlayerDataExample",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

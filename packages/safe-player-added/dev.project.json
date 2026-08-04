@@ -1,0 +1,12 @@
+{
+  "name": "safe-player-added",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "SafePlayerAdded": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

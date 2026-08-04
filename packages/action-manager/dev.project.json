@@ -1,0 +1,12 @@
+{
+  "name": "action-manager",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "ActionManager": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

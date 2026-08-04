@@ -1,0 +1,17 @@
+{
+  "name": "spawn-with-friends-dev",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "SpawnWithFriends": {
+        "$path": "src",
+        "$ignoreUnknownInstances": true,
+        "Packages": {
+          "$path": "Packages",
+          "Cryo": { "$path": "../dev-modules-shared/src/Cryo" },
+          "TeleportToPlayer": { "$path": "../dev-modules-shared/src/TeleportToPlayer/src" }
+        }
+      }
+    }
+  }
+}

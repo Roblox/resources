@@ -1,0 +1,86 @@
+{
+    "fileVersion": 1,
+    "placeFile": "baseplate.template.rbxl",
+    "instanceHierarchy": {
+        "name": "laser-tag-1A-tutorial",
+        "tree": {
+            "$className": "DataModel",
+            "ReplicatedStorage": {
+                "$className": "ReplicatedStorage",
+                "$path": "src/ReplicatedStorage",
+                "Instances": {
+                    "$path": "instances/ReplicatedStorage"
+                }
+            },
+            "ServerScriptService": {
+                "$className": "ServerScriptService",
+                "$path": "src/ServerScriptService",
+            },
+            "ReplicatedFirst": {
+                "$className": "ReplicatedFirst",
+                "$path": "src/ReplicatedFirst",
+                "Instances": {
+                    "$path": "instances/ReplicatedFirst"
+                }
+            },
+            "ServerStorage": {
+                "$className": "ServerStorage",
+                "$path": "src/ServerStorage",
+                "Instances": {
+                    "$path": "instances/ServerStorage"
+                }
+            },
+            "StarterGui": {
+                "$className": "StarterGui",
+                "$path": "instances/StarterGui"
+            },
+            "StarterPlayer": {
+                "$className": "StarterPlayer",
+                "StarterPlayerScripts": {
+                    "$className": "StarterPlayerScripts",
+                    "$path": "src/StarterPlayerScripts"
+                },
+                "StarterCharacterScripts": {
+                    "$className": "StarterCharacterScripts",
+                    "$path": "src/StarterCharacterScripts"
+                },
+                "$properties": {
+                    "CameraMode": 1,
+                    "CharacterJumpHeight": 0,
+                    "CharacterWalkSpeed": 0
+                }
+            },
+            "SoundService": {
+                "$className": "SoundService",
+                "$path": "instances/SoundService"
+            },
+            "Workspace": {
+                "$className": "Workspace",
+                "World": {
+                    "$path": "instances/Workspace/World"
+                }
+            },
+            "Players": {
+                "$className": "Players",
+                "$properties": {
+                    "RespawnTime": 5,
+                }
+            },
+            "Lighting": {
+                "$className": "Lighting",
+                "$path": "instances/Lighting",
+                "$properties": {
+                    "Brightness": 2,
+                    "EnvironmentDiffuseScale": 1,
+                    "EnvironmentSpecularScale": 1,
+                    "GlobalShadows": true,
+                    "Outlines": false,
+                    "Technology": 4,
+                    "ClockTime": 14.5,
+                    "GeographicLatitude": 0,
+                    "ExposureCompensation": 0
+                }
+            }
+        }
+    }
+}

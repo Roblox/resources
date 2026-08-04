@@ -1,0 +1,12 @@
+{
+  "name": "thread-queue",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "ThreadQueue": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

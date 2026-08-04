@@ -1,0 +1,12 @@
+{
+  "name": "leaderboard",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Leaderboard": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

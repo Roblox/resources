@@ -1,0 +1,12 @@
+{
+  "name": "cloud-config",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "CloudConfig": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

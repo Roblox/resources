@@ -1,0 +1,7 @@
+{
+  "name": "ActionManager",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

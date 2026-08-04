@@ -1,0 +1,12 @@
+{
+  "name": "code-reservation-service",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "CodeReservationService": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

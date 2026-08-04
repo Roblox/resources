@@ -1,0 +1,7 @@
+{
+  "name": "ModerationSystem",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

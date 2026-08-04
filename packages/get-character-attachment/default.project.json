@@ -1,0 +1,7 @@
+{
+  "name": "GetCharacterAttachment",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

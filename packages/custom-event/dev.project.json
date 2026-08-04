@@ -1,0 +1,12 @@
+{
+  "name": "custom-event",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "CustomEvent": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

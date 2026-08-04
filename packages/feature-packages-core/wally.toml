@@ -1,0 +1,10 @@
+[package]
+name = "roblox/feature-packages-core"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+# Shared library consumed by all bloxkit feature packages.
+# No external deps — this is the foundation.
+
+[dependencies]

@@ -1,0 +1,12 @@
+{
+  "name": "geofence",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Geofence": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

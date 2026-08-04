@@ -1,0 +1,12 @@
+{
+  "name": "portal-door",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "PortalDoor": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

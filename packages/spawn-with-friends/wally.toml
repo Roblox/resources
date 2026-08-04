@@ -1,0 +1,11 @@
+[package]
+name = "roblox/spawn-with-friends"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+# Cryo and TeleportToPlayer are vendored in `packages/dev-modules-shared/`
+# (not on public Wally) and mounted via this package's default.project.json.
+
+[dependencies]
+t = "osyrisrblx/t@3.0.0"

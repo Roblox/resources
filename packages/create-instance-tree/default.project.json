@@ -1,0 +1,7 @@
+{
+  "name": "CreateInstanceTree",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

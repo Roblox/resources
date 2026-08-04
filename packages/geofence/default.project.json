@@ -1,0 +1,7 @@
+{
+  "name": "Geofence",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

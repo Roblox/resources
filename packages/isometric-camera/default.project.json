@@ -1,0 +1,7 @@
+{
+  "name": "IsometricCamera",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

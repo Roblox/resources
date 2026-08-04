@@ -1,0 +1,12 @@
+{
+  "name": "sprint-with-button",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "SprintWithButton": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "LoadingScreen",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

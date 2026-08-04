@@ -1,0 +1,12 @@
+{
+  "name": "character-path",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "CharacterPath": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

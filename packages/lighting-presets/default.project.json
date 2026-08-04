@@ -1,0 +1,7 @@
+{
+  "name": "LightingPresets",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

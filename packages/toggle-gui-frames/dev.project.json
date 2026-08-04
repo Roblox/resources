@@ -1,0 +1,12 @@
+{
+  "name": "toggle-gui-frames",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "ToggleGuiFrames": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

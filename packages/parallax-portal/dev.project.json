@@ -1,0 +1,12 @@
+{
+  "name": "parallax-portal",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "ParallaxPortal": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

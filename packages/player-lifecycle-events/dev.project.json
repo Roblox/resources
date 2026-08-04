@@ -1,0 +1,12 @@
+{
+  "name": "player-lifecycle-events",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "PlayerLifecycleEvents": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

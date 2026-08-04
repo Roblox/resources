@@ -1,0 +1,7 @@
+{
+  "name": "ToggleGuiFrames",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

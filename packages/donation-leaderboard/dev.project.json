@@ -1,0 +1,12 @@
+{
+  "name": "donation-leaderboard",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "DonationLeaderboard": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

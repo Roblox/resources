@@ -1,0 +1,7 @@
+{
+  "name": "FireRaycast",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

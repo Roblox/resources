@@ -1,0 +1,7 @@
+{
+  "name": "Leaderboard",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

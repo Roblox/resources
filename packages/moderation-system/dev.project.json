@@ -1,0 +1,12 @@
+{
+  "name": "moderation-system",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "ModerationSystem": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

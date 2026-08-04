@@ -1,0 +1,7 @@
+{
+  "name": "BeamBetween",
+  "tree": {
+    "$className": "Folder",
+    "$path": "src/shared"
+  }
+}

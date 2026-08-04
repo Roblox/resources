@@ -1,0 +1,12 @@
+{
+  "name": "get-character-attachment",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "GetCharacterAttachment": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "player-data-example",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "PlayerDataExample": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

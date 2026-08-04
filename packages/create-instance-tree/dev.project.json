@@ -1,0 +1,12 @@
+{
+  "name": "create-instance-tree",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "CreateInstanceTree": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

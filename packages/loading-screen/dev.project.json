@@ -1,0 +1,12 @@
+{
+  "name": "loading-screen",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "LoadingScreen": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

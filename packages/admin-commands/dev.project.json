@@ -1,0 +1,12 @@
+{
+  "name": "admin-commands",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "AdminCommands": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}

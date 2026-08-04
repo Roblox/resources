@@ -1,0 +1,12 @@
+{
+  "name": "tween-group",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "TweenGroup": {
+        "$path": "src/shared",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}
