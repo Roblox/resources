@@ -1,0 +1,6 @@
+return {
+	CAMERA_OFFSET = Vector3.new(16, 40, 20),
+	ROTATION_STEP = math.rad(45), -- per E/Q press; 90° = classic 4-way iso, 45° for 8-way.
+	ROTATION_SPEED = 16, -- Lerp factor; higher = snappier, ~6–10 feels good.
+	PAN_SPEED = 180,
+}
