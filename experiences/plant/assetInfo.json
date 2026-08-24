@@ -1,0 +1,10 @@
+{
+  "production": {
+    "universeId": 4961695929,
+    "placeId": 14353060924
+  },
+  "staging": {
+    "universeId": 0,
+    "placeId": 0
+  }
+}

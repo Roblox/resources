@@ -1,0 +1,142 @@
+{
+  "className": "ParticleEmitter",
+  "properties": {
+    "ZOffset": -1.0,
+    "Lifetime": {
+      "NumberRange": [
+        2.0,
+        2.0
+      ]
+    },
+    "Speed": {
+      "NumberRange": [
+        0.0,
+        0.0
+      ]
+    },
+    "LightEmission": 0.15000000596046448,
+    "ShapeInOut": "InAndOut",
+    "Color": {
+      "ColorSequence": {
+        "keypoints": [
+          {
+            "time": 0.0,
+            "color": [
+              0.9531548,
+              1.0,
+              0.2579385
+            ]
+          },
+          {
+            "time": 0.29333335,
+            "color": [
+              0.99876314,
+              1.0,
+              0.98040766
+            ]
+          },
+          {
+            "time": 0.6466667,
+            "color": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "time": 1.0,
+            "color": [
+              0.9728237,
+              1.0,
+              0.5494011
+            ]
+          }
+        ]
+      }
+    },
+    "Size": {
+      "NumberSequence": {
+        "keypoints": [
+          {
+            "time": 0.0,
+            "value": 3.0,
+            "envelope": 0.0
+          },
+          {
+            "time": 1.0,
+            "value": 3.0,
+            "envelope": 0.0
+          }
+        ]
+      }
+    },
+    "Transparency": {
+      "NumberSequence": {
+        "keypoints": [
+          {
+            "time": 0.0,
+            "value": 1.0,
+            "envelope": 0.0
+          },
+          {
+            "time": 0.1,
+            "value": 0.5,
+            "envelope": 0.0
+          },
+          {
+            "time": 0.9,
+            "value": 0.5,
+            "envelope": 0.0
+          },
+          {
+            "time": 1.0,
+            "value": 1.0,
+            "envelope": 0.0
+          }
+        ]
+      }
+    },
+    "LightInfluence": 1.0,
+    "LockedToPart": true,
+    "Rate": 6.0,
+    "Rotation": {
+      "NumberRange": [
+        -45.0,
+        45.0
+      ]
+    },
+    "Squash": {
+      "NumberSequence": {
+        "keypoints": [
+          {
+            "time": 0.0,
+            "value": 0.0,
+            "envelope": 0.0
+          },
+          {
+            "time": 0.35,
+            "value": 1.5,
+            "envelope": 0.0
+          },
+          {
+            "time": 0.7,
+            "value": -1.5,
+            "envelope": 0.0
+          },
+          {
+            "time": 1.0,
+            "value": 0.0,
+            "envelope": 0.0
+          }
+        ]
+      }
+    },
+    "RotSpeed": {
+      "NumberRange": [
+        -10.0,
+        10.0
+      ]
+    },
+    "TextureContent": "rbxassetid://9865583353"
+  }
+}

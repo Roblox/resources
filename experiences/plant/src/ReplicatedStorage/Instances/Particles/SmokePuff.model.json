@@ -1,0 +1,95 @@
+{
+  "className": "ParticleEmitter",
+  "properties": {
+    "Drag": 1.0,
+    "Lifetime": {
+      "NumberRange": [
+        0.5,
+        1.0
+      ]
+    },
+    "Speed": {
+      "NumberRange": [
+        2.0,
+        2.0
+      ]
+    },
+    "Shape": "Sphere",
+    "Color": {
+      "ColorSequence": {
+        "keypoints": [
+          {
+            "time": 0.0,
+            "color": [
+              0.8333257,
+              0.115815975,
+              0.338262
+            ]
+          },
+          {
+            "time": 1.0,
+            "color": [
+              0.8755474,
+              0.8741894,
+              0.8858625
+            ]
+          }
+        ]
+      }
+    },
+    "ShapeStyle": "Surface",
+    "Size": {
+      "NumberSequence": {
+        "keypoints": [
+          {
+            "time": 0.0,
+            "value": 0.99999964,
+            "envelope": 0.0
+          },
+          {
+            "time": 1.0,
+            "value": 3.0,
+            "envelope": 0.0
+          }
+        ]
+      }
+    },
+    "Transparency": {
+      "NumberSequence": {
+        "keypoints": [
+          {
+            "time": 0.0,
+            "value": 0.0,
+            "envelope": 0.0
+          },
+          {
+            "time": 0.29930395,
+            "value": 0.0,
+            "envelope": 0.0
+          },
+          {
+            "time": 1.0,
+            "value": 1.0,
+            "envelope": 0.0
+          }
+        ]
+      }
+    },
+    "LightInfluence": 1.0,
+    "Rate": 50.0,
+    "Rotation": {
+      "NumberRange": [
+        -180.0,
+        180.0
+      ]
+    },
+    "Enabled": false,
+    "RotSpeed": {
+      "NumberRange": [
+        -90.0,
+        90.0
+      ]
+    },
+    "TextureContent": "rbxassetid://9865475203"
+  }
+}

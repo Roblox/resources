@@ -1,0 +1,26 @@
+{
+  "fileVersion": 1,
+  "placeFile": "Plant.rbxl",
+  "instanceHierarchy": {
+    "name": "plant",
+    "tree": {
+      "$className": "DataModel",
+      "ReplicatedFirst": {
+        "$className": "ReplicatedFirst",
+        "$path": "src/ReplicatedFirst"
+      },
+      "ReplicatedStorage": {
+        "$className": "ReplicatedStorage",
+        "$path": "src/ReplicatedStorage"
+      },
+      "ServerScriptService": {
+        "$className": "ServerScriptService",
+        "$path": "src/ServerScriptService"
+      },
+      "ServerStorage": {
+        "$className": "ServerStorage",
+        "$path": "src/ServerStorage"
+      }
+    }
+  }
+}

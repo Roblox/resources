@@ -1,6 +1,6 @@
-# Roblox Code Samples
+# Roblox Resources
 
-A collection of creator-facing code samples published by Roblox: reference experiences, Studio templates, and reusable packages. These are the same samples featured in the [Roblox documentation](https://create.roblox.com/docs).
+A collection of creator-facing resources published by Roblox: reference experiences, Studio templates, and reusable packages. These are the same samples featured in the [Roblox documentation](https://create.roblox.com/docs).
 
 ## What's in this repo
 
@@ -31,10 +31,7 @@ A collection of creator-facing code samples published by Roblox: reference exper
 
 ## Contributing
 
-We welcome community contributions! When you open a pull request, Developer Advocates from the Roblox Creator Solutions team will review it and either:
-
-- Guide you on best practices and work the change in, or
-- Direct you to file a bug report on the [Developer Forum](https://devforum.roblox.com) if the issue requires internal handling.
+We welcome bug fixes and minor additions. Larger contributions are challenging to review and might not be accepted. If a pull request requires internal handling, the team might direct you to file a bug report on the [Developer Forum](https://devforum.roblox.com/c/bug-reports/10).
 
 Please do not open issues for private bugs or security vulnerabilities—use the DevForum for those.
 

@@ -1,5 +1,5 @@
 {
-  "name": "dialog-system",
+  "name": "top-down-camera",
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {

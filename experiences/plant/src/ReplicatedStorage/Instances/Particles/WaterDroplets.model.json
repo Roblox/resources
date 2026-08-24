@@ -1,0 +1,75 @@
+{
+  "className": "ParticleEmitter",
+  "properties": {
+    "Lifetime": {
+      "NumberRange": [
+        1.0,
+        1.0
+      ]
+    },
+    "Speed": {
+      "NumberRange": [
+        0.0,
+        0.0
+      ]
+    },
+    "Color": {
+      "ColorSequence": {
+        "keypoints": [
+          {
+            "time": 0.0,
+            "color": [
+              0.25865567,
+              0.43456167,
+              0.9984894
+            ]
+          },
+          {
+            "time": 1.0,
+            "color": [
+              0.25865567,
+              0.43456167,
+              0.9984894
+            ]
+          }
+        ]
+      }
+    },
+    "ShapeStyle": "Surface",
+    "Size": {
+      "NumberSequence": {
+        "keypoints": [
+          {
+            "time": 0.0,
+            "value": 0.0,
+            "envelope": 0.0
+          },
+          {
+            "time": 0.1,
+            "value": 0.3,
+            "envelope": 0.0
+          },
+          {
+            "time": 0.9,
+            "value": 0.3,
+            "envelope": 0.0
+          },
+          {
+            "time": 1.0,
+            "value": 0.0,
+            "envelope": 0.0
+          }
+        ]
+      }
+    },
+    "LightInfluence": 1.0,
+    "LockedToPart": true,
+    "Rate": 40.0,
+    "Acceleration": [
+      0.0,
+      -20.0,
+      0.0
+    ],
+    "TextureContent": "rbxassetid://9865279708"
+  }
+}

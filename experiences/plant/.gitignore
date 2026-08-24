@@ -1,0 +1,5 @@
+# Instance files here live under `Instances/`, but the root .gitignore's
+# `*.rbxm` exception only spells it lowercase. Ignore matching is case-sensitive
+# off macOS, so re-include them for this experience rather than widening the
+# root pattern.
+!**/Instances/**/*.rbxm
