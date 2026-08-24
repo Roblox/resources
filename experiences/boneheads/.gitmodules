@@ -1,0 +1,6 @@
+[submodule "cgs-core-libraries"]
+	path = cgs-core-libraries
+	url = https://github.com/Roblox/cgs-core-libraries
+[submodule "cgs-claude-skills"]
+	path = cgs-claude-skills
+	url = https://github.com/Roblox/cgs-claude-skills.git

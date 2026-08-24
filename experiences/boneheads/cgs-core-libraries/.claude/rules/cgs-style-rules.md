@@ -1,0 +1,1 @@
+../../cgs-claude-skills/.claude/rules/cgs-style-rules.md

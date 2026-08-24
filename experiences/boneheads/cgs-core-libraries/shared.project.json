@@ -1,0 +1,8 @@
+{
+	"name": "shared",
+	"emitLegacyScripts": false,
+	"tree": {
+		"$className": "Folder",
+		"$path": "src/shared"
+	}
+}

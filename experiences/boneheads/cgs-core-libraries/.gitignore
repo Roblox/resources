@@ -1,0 +1,12 @@
+# Project place files
+/cgs-core-libraries.rbxmx
+/cgs-core-libraries.rbxm
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+sourcemap.json
+globalTypes.d.luau
+
+**/.DS_STORE

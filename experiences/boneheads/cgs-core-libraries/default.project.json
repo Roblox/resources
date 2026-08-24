@@ -1,0 +1,22 @@
+{
+	"name": "cgs-core-libraries",
+	"emitLegacyScripts": false,
+	"tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"Core": {
+				"$path": "shared.project.json"
+			}
+		},
+		"ServerScriptService": {
+			"Core": {
+				"$path": "server.project.json"
+			}
+		},
+		"SoundService": {
+			"$properties": {
+				"DefaultListenerLocation": "None"
+			}
+		}
+	}
+}
