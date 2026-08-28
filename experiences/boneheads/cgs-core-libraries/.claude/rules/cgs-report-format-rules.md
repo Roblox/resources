@@ -1,1 +1,0 @@
-../../cgs-claude-skills/.claude/rules/cgs-report-format-rules.md
