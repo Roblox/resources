@@ -1,0 +1,41 @@
+{
+    "ClassName": "ScreenGui",
+    "Properties": {
+        "ResetOnSpawn": false,
+        "IgnoreGuiInset": true
+    },
+    "Children": [
+        {
+            "ClassName": "Frame",
+            "Name": "Mover",
+            "Properties": {
+                "BackgroundColor3": [0.2, 0.6, 1],
+                "AnchorPoint": [0.5, 0.5],
+                "Position": {"UDim2": [[0.5, 0], [0.5, 0]]},
+                "Size": {"UDim2": [[0, 50], [0, 50]]}
+            },
+            "Children": [
+                {
+                    "ClassName": "UICorner",
+                    "Properties": {
+                        "CornerRadius": {"UDim": [0, 8]}
+                    }
+                }
+            ]
+        },
+        {
+            "ClassName": "TextLabel",
+            "Name": "DirectionLabel",
+            "Properties": {
+                "Size": {"UDim2": [[0, 200], [0, 30]]},
+                "Position": {"UDim2": [[0, 10], [0, 80]]},
+                "BackgroundTransparency": 0.5,
+                "BackgroundColor3": [0, 0, 0],
+                "TextColor3": [1, 1, 1],
+                "Font": "RobotoMono",
+                "TextSize": 14,
+                "Text": "dir: 0.00, 0.00"
+            }
+        }
+    ]
+}

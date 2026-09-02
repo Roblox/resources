@@ -1,0 +1,17 @@
+{
+    "name": "ias-2d-test",
+    "emitLegacyScripts": false,
+    "tree": {
+        "$className": "DataModel",
+
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "$path": "tests/ias_direction2d/ReplicatedStorage"
+        },
+
+        "StarterGui": {
+            "$className": "StarterGui",
+            "$path": "tests/ias_direction2d/StarterGui"
+        }
+    }
+}

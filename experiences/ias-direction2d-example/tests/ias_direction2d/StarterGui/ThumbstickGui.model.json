@@ -1,0 +1,57 @@
+{
+    "ClassName": "ScreenGui",
+    "Properties": {
+        "ResetOnSpawn": false,
+        "IgnoreGuiInset": true,
+        "DisplayOrder": 10
+    },
+    "Children": [
+        {
+            "ClassName": "Frame",
+            "Name": "OuterRing",
+            "Properties": {
+                "Size": {"UDim2": [[0, 160], [0, 160]]},
+                "AnchorPoint": [0.5, 0.5],
+                "Position": {"UDim2": [[0, 120], [1, -120]]},
+                "BackgroundColor3": [1, 1, 1],
+                "BackgroundTransparency": 0.7,
+                "Visible": false
+            },
+            "Children": [
+                {
+                    "ClassName": "UICorner",
+                    "Properties": {
+                        "CornerRadius": {"UDim": [1, 0]}
+                    }
+                },
+                {
+                    "ClassName": "UIStroke",
+                    "Properties": {
+                        "Color": [1, 1, 1],
+                        "Thickness": 2,
+                        "Transparency": 0.4
+                    }
+                },
+                {
+                    "ClassName": "Frame",
+                    "Name": "InnerThumb",
+                    "Properties": {
+                        "Size": {"UDim2": [[0, 60], [0, 60]]},
+                        "AnchorPoint": [0.5, 0.5],
+                        "Position": {"UDim2": [[0.5, 0], [0.5, 0]]},
+                        "BackgroundColor3": [1, 1, 1],
+                        "BackgroundTransparency": 0.3
+                    },
+                    "Children": [
+                        {
+                            "ClassName": "UICorner",
+                            "Properties": {
+                                "CornerRadius": {"UDim": [1, 0]}
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

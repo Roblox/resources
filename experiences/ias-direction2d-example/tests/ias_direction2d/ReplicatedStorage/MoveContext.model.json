@@ -1,0 +1,33 @@
+{
+  "ClassName": "InputContext",
+  "Properties": { "Sink": true, "Priority": 100 },
+
+  "Children": [
+    {
+      "ClassName": "InputAction",
+      "Name": "Move",
+      "Properties": {
+        "Type": "Direction2D"
+      },
+      "Children": [
+        {
+          "ClassName": "InputBinding",
+          "Name": "WASD",
+          "Properties": {
+            "Up": "W",
+            "Down": "S",
+            "Left": "A",
+            "Right": "D"
+          }
+        },
+        {
+          "ClassName": "InputBinding",
+          "Name": "Thumbstick",
+          "Properties": {
+            "KeyCode": "Thumbstick1"
+          }
+        }
+      ]
+    }
+  ]
+}

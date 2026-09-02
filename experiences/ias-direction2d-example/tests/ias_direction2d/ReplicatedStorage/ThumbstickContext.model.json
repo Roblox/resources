@@ -1,0 +1,27 @@
+{
+  "ClassName": "InputContext",
+  "Properties": { "Sink": true, "Priority": 100 },
+
+  "Children": [
+    {
+      "ClassName": "InputAction",
+      "Name": "ThumbstickAction",
+      "Properties": { "Type": "ViewportPosition" },
+      "Children": [
+        {
+          "ClassName": "InputBinding",
+          "Name": "Touch",
+          "Properties": {
+          }
+        },
+        {
+          "ClassName": "InputBinding",
+          "Name": "Mouse",
+          "Properties": {
+            "KeyCode": "MousePosition",
+          }
+        },
+      ]
+    },
+  ]
+}
