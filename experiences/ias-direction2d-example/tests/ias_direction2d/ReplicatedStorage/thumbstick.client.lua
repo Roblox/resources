@@ -25,7 +25,6 @@ ThumbstickTouch.StateChanged:Connect(function(state)
 		outerRing.Position = UDim2.fromOffset(originPos.X, originPos.Y)
 		innerThumb.Position = UDim2.fromScale(0.5, 0.5)
 		outerRing.Visible = true
-
 	elseif state ~= Vector2.new(-1, -1) then
 		local rawDelta = state - originPos
 		local maxDist = OUTER_RADIUS - INNER_RADIUS
@@ -46,7 +45,6 @@ ThumbstickTouch.StateChanged:Connect(function(state)
 		innerThumb.Position = UDim2.new(0.5, clampedDelta.X, 0.5, clampedDelta.Y)
 
 		MoveAction:Fire(Vector2.new(normalizedX, -normalizedY))
-
 	else
 		originPos = Vector2.zero
 		outerRing.Visible = false
