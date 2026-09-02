@@ -1,0 +1,18 @@
+{
+  "fileVersion": 1,
+  "placeFile": "GoldRush.rbxl",
+  "instanceHierarchy": {
+    "name": "plant",
+    "tree": {
+      "$className": "DataModel",
+      "ReplicatedStorage": {
+        "$className": "ReplicatedStorage",
+        "$path": "src/ReplicatedStorage"
+      },
+      "ServerScriptService": {
+        "$className": "ServerScriptService",
+        "$path": "src/ServerScriptService"
+      }
+    }
+  }
+}
