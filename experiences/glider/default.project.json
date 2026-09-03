@@ -1,0 +1,22 @@
+{
+  "name": "glider",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$path": "src/ServerScriptService"
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterCharacterScripts": {
+        "$className": "StarterCharacterScripts",
+        "$path": "src/StarterCharacterScripts"
+      },
+      "$properties": {
+        "AvatarJointUpgrade_Serialized": {
+          "Enum": 0
+        },
+        "CharacterUseJumpPower": false
+      }
+    }
+  }
+}
