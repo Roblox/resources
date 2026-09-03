@@ -20,7 +20,7 @@ local toggleButton = toolbar:CreateButton("EditableMeshKicker", "Open the Editab
 toggleButton.ClickableWhenViewportHidden = true
 
 local widgetInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 260, 120, 200, 100)
-local widget = plugin:CreateDockWidgetPluginGui("EditableMeshKicker_MainWidget", widgetInfo)
+local widget = plugin:CreateDockWidgetPluginGuiAsync("EditableMeshKicker_MainWidget", widgetInfo)
 widget.Title = "EditableMesh Kicker"
 widget.Name = "EditableMeshKicker"
 

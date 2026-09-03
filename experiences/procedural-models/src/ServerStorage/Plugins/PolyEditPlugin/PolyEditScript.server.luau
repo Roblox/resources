@@ -7,7 +7,7 @@ local toggleButton = toolbar:CreateButton("PolyEdit", "Open the PolyEdit panel",
 toggleButton.ClickableWhenViewportHidden = true
 
 local widgetInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 300, 340, 240, 260)
-local widget = plugin:CreateDockWidgetPluginGui("PolyEdit_MainWidget", widgetInfo)
+local widget = plugin:CreateDockWidgetPluginGuiAsync("PolyEdit_MainWidget", widgetInfo)
 widget.Title = "PolyEdit"
 widget.Name = "PolyEdit"
 

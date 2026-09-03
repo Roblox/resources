@@ -141,7 +141,7 @@ local toggleButton = toolbar:CreateButton("GuidMaintainer", "Open the GUID Maint
 toggleButton.ClickableWhenViewportHidden = true
 
 local widgetInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 280, 160, 240, 140)
-local widget = plugin:CreateDockWidgetPluginGui("GuidMaintainer_MainWidget", widgetInfo)
+local widget = plugin:CreateDockWidgetPluginGuiAsync("GuidMaintainer_MainWidget", widgetInfo)
 widget.Title = "GUID Maintainer"
 widget.Name = "GuidMaintainer"
 
