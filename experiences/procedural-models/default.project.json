@@ -1,0 +1,14 @@
+{
+  "name": "procedural-models",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedFirst": {
+      "$path": "src/ReplicatedFirst"
+    },
+
+    "ServerStorage": {
+      "$path": "src/ServerStorage"
+    }
+  }
+}
