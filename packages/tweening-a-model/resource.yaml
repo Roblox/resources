@@ -1,0 +1,188 @@
+schemaVersion: 1
+id: tweening-a-model
+title: Using TweenService on a Model
+description: Demonstrates how to properly tween a model. Models should be
+  tweened from an anchored part. If parts within the model are unanchored, weld
+  these parts to the anchored part. Otherwise the unanchored parts will not
+  follow the model as it tweens. In this case, the Base part is set as the
+  HealthPack's PrimaryPart and all other parts in the model are welded to it.
+category: Visual
+tags: []
+
+build:
+  start: baseplate
+  project: dev.project.json
+  steps:
+    - id: s1-intro
+      type: narrative
+      title: A bouncing health pack
+      body: |
+        You'll make a health pack that bobs up and down forever. The trick is
+        to move one anchored part and let everything else follow it.
+
+    - id: s2-base
+      type: scripted
+      title: Anchor one part
+      body: |
+        The Base is the only anchored part. It becomes the model's
+        PrimaryPart, which is the part the tween moves.
+      explain: |
+        The model streams in atomically, so a client script never sees the
+        health pack before its PrimaryPart has arrived.
+      caption: HealthPack.PrimaryPart = Base
+      actions:
+        - op: createInstance
+          class: Folder
+          parent: Workspace
+          props: { Name: TweeningAModel }
+        - op: createInstance
+          class: Model
+          parent: Workspace.TweeningAModel
+          props: { Name: HealthPack, ModelStreamingMode: Enum.ModelStreamingMode.Atomic }
+        - op: createInstance
+          class: Part
+          parent: Workspace.TweeningAModel.HealthPack
+          props:
+            Name: Base
+            Anchored: true
+            Size: [3, 2, 1]
+            Position: [-0.5, 3, -22.5]
+            Color: [0.937, 0.937, 0.961]
+        - op: setProperty
+          target: Workspace.TweeningAModel.HealthPack
+          property: PrimaryPart
+          value: Workspace.TweeningAModel.HealthPack.Base
+      focus:
+        selection: Workspace.TweeningAModel.HealthPack.Base
+      shot:
+        subject: Workspace.TweeningAModel.HealthPack
+        framing: close
+
+    - id: s3-weld
+      type: scripted
+      title: Weld the rest to it
+      body: |
+        The handle and the green cross are unanchored and welded to the Base,
+        so they move with it.
+      explain: |
+        An unanchored part that isn't welded would fall or stay behind when
+        the Base moves. Welding keeps the model together as one piece.
+      caption: WeldConstraint Part0 = Base
+      actions:
+        - op: createInstance
+          class: Part
+          parent: Workspace.TweeningAModel.HealthPack
+          props:
+            Name: Handle
+            Anchored: false
+            Size: [1.4, 0.4, 0.4]
+            Position: [-0.5, 4.2, -22.5]
+            Color: [0.71, 0.71, 0.725]
+        - op: createInstance
+          class: Part
+          parent: Workspace.TweeningAModel.HealthPack
+          props:
+            Name: CrossHorizontal
+            Anchored: false
+            Size: [1.6, 0.4, 1.1]
+            Position: [-0.5, 3, -22.5]
+            Color: [0.125, 0.824, 0.133]
+            Material: Enum.Material.Neon
+        - op: createInstance
+          class: Part
+          parent: Workspace.TweeningAModel.HealthPack
+          props:
+            Name: CrossVertical
+            Anchored: false
+            Size: [0.4, 1.6, 1.1]
+            Position: [-0.5, 3, -22.5]
+            Color: [0.125, 0.824, 0.133]
+            Material: Enum.Material.Neon
+        - op: createInstance
+          class: WeldConstraint
+          parent: Workspace.TweeningAModel.HealthPack.Handle
+          props:
+            Part0: Workspace.TweeningAModel.HealthPack.Base
+            Part1: Workspace.TweeningAModel.HealthPack.Handle
+        - op: createInstance
+          class: WeldConstraint
+          parent: Workspace.TweeningAModel.HealthPack.CrossHorizontal
+          props:
+            Part0: Workspace.TweeningAModel.HealthPack.Base
+            Part1: Workspace.TweeningAModel.HealthPack.CrossHorizontal
+        - op: createInstance
+          class: WeldConstraint
+          parent: Workspace.TweeningAModel.HealthPack.CrossVertical
+          props:
+            Part0: Workspace.TweeningAModel.HealthPack.Base
+            Part1: Workspace.TweeningAModel.HealthPack.CrossVertical
+      focus:
+        selection: Workspace.TweeningAModel.HealthPack
+      shot:
+        subject: Workspace.TweeningAModel.HealthPack
+        framing: close
+
+    - id: s4-find
+      type: codeEdit
+      title: Find the part to move
+      body: |
+        The script sets how far and how fast to bounce, then remembers where
+        the PrimaryPart starts.
+      caption: BOUNCE_TIME = 1, BOUNCE_HEIGHT = 1.5
+      code:
+        file: src/shared/TweenModelScript.server.luau
+        lines: [[8, 16]]
+        target:
+          path: Workspace.TweeningAModel.TweenModelScript
+          class: Script
+      focus:
+        script: { file: src/shared/TweenModelScript.server.luau, lines: [14, 16] }
+
+    - id: s5-tween
+      type: codeEdit
+      title: Describe the bounce
+      body: |
+        TweenInfo describes the motion: one second each way, eased, reversing,
+        and repeating forever. The tween moves the PrimaryPart up by the bounce
+        height.
+      explain: |
+        `math.huge` as the repeat count makes the tween loop forever, and
+        `true` for reverses makes it come back down after each rise.
+      caption: TweenInfo.new(BOUNCE_TIME, Quad, InOut, math.huge, true)
+      code:
+        file: src/shared/TweenModelScript.server.luau
+        lines: [[8, 24]]
+      focus:
+        script: { file: src/shared/TweenModelScript.server.luau, lines: [18, 24] }
+
+    - id: s6-play
+      type: codeEdit
+      title: Play it
+      body: Calling `Play` starts the tween.
+      caption: tween:Play()
+      code:
+        file: src/shared/TweenModelScript.server.luau
+      focus:
+        script: { file: src/shared/TweenModelScript.server.luau, lines: [26, 27] }
+
+    - id: s7-client
+      type: scripted
+      title: Run it on each client
+      body: |
+        The script's RunContext is Client, as in the package, so each player
+        animates the bounce locally.
+      caption: RunContext = Client
+      action:
+        op: setProperty
+        target: Workspace.TweeningAModel.TweenModelScript
+        property: RunContext
+        value: Enum.RunContext.Client
+      focus:
+        selection: Workspace.TweeningAModel.TweenModelScript
+
+    - id: s8-playtest
+      type: playtest
+      title: Watch it bounce
+      body: |
+        Press **Play** (F5). The health pack rises and falls about a stud and a
+        half, and the handle and cross move with it.

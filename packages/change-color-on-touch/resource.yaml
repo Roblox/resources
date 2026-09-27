@@ -1,0 +1,91 @@
+schemaVersion: 1
+id: change-color-on-touch
+title: Change Part Color On Touch
+description: Demonstrates changing the color of a part upon being touched by a
+  player's character. The color change is debounced to ensure the Touched event
+  does not trigger a color change too quickly. The part's color is randomly set
+  using math.random.
+category: Player & Character
+tags: []
+
+build:
+  start: baseplate
+  project: dev.project.json
+  steps:
+    - id: s1-intro
+      type: narrative
+      title: A part that reacts
+      body: |
+        You'll build a part that changes to a random color whenever a player
+        steps on it, with a short cooldown so it doesn't flicker.
+
+    - id: s2-part
+      type: scripted
+      title: Add the part
+      body: The script looks for a part named Part next to it, so both go in one folder.
+      caption: ChangeColorOnTouch → Part
+      actions:
+        - op: createInstance
+          class: Folder
+          parent: Workspace
+          props: { Name: ChangeColorOnTouch }
+        - op: createInstance
+          class: Part
+          parent: Workspace.ChangeColorOnTouch
+          props:
+            Name: Part
+            Anchored: true
+            Size: [8, 1, 8]
+            Position: [0, 0.5, -12]
+      focus:
+        selection: Workspace.ChangeColorOnTouch.Part
+      shot:
+        subject: Workspace.ChangeColorOnTouch.Part
+        framing: close
+
+    - id: s3-setup
+      type: codeEdit
+      title: Find the part and set up state
+      body: The script finds its part and keeps an `enabled` flag for the cooldown.
+      caption: DEBOUNCE_TIME = 1
+      code:
+        file: src/shared/ChangeColorOnTouchScript.server.luau
+        lines: [[7, 12]]
+        target:
+          path: Workspace.ChangeColorOnTouch.ChangeColorOnTouchScript
+          class: Script
+      focus:
+        script: { file: src/shared/ChangeColorOnTouchScript.server.luau, lines: [9, 12] }
+
+    - id: s4-handler
+      type: codeEdit
+      title: Only react to players
+      body: |
+        The handler checks that a player's character touched the part, then
+        picks a random color and waits before it can change again.
+      explain: |
+        `GetPlayerFromCharacter` returns nil for anything that isn't a
+        character, so loose parts and other objects don't trigger it.
+      caption: Players:GetPlayerFromCharacter(character)
+      code:
+        file: src/shared/ChangeColorOnTouchScript.server.luau
+        lines: [[7, 33]]
+      focus:
+        script: { file: src/shared/ChangeColorOnTouchScript.server.luau, lines: [14, 33] }
+
+    - id: s5-connect
+      type: codeEdit
+      title: Connect the touch
+      body: Connecting to `Touched` turns the handler on.
+      caption: part.Touched:Connect(onPartTouched)
+      code:
+        file: src/shared/ChangeColorOnTouchScript.server.luau
+      focus:
+        script: { file: src/shared/ChangeColorOnTouchScript.server.luau, lines: [35, 36] }
+
+    - id: s6-playtest
+      type: playtest
+      title: Step on it
+      body: |
+        Press **Play** (F5) and walk onto the part. It changes color, and
+        stays that color for a second before it can change again.

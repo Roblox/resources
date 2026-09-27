@@ -1,0 +1,260 @@
+schemaVersion: 1
+id: fire-raycast
+title: Raycasting
+description: The fireRaycast function fires a ray from an Attachment position,
+  visualizing the path of the ray and the surface normal that was hit. A model
+  named "Device" rotates around in a circle, pointing the ray at various
+  objects.
+category: 3D Space
+tags: []
+
+build:
+  start: baseplate
+  project: dev.project.json
+  chapters:
+    - id: scene
+      title: Build the scene
+      steps:
+        - id: s1-intro
+          type: narrative
+          title: A spinning laser
+          body: |
+            You'll build a device that spins in place and fires a ray every
+            frame. An arrow shows where the ray hits, which way that surface
+            faces, and the name of what it hit.
+
+        - id: s2-device
+          type: scripted
+          title: Build a device that spins
+          body: |
+            The Body sits on an anchored Base. A motorized hinge between them
+            turns the Body in a circle.
+          explain: |
+            The script doesn't rotate anything. The hinge's motor does, so the
+            ray's direction changes on its own and the script only has to read it.
+            The device is a persistent model, so it's on every client from the
+            start and the client script can use it right away.
+          caption: HingeConstraint · Motor · AngularVelocity = 1
+          actions:
+            - op: createInstance
+              class: Folder
+              parent: Workspace
+              props: { Name: FireRaycast }
+            - op: createInstance
+              class: Folder
+              parent: Workspace.FireRaycast
+              props: { Name: Demo }
+            - op: createInstance
+              class: Folder
+              parent: Workspace.FireRaycast.Demo
+              props: { Name: Instances }
+            - op: createInstance
+              class: Model
+              parent: Workspace.FireRaycast.Demo.Instances
+              props: { Name: Device, ModelStreamingMode: Enum.ModelStreamingMode.Persistent }
+            - op: createInstance
+              class: Part
+              parent: Workspace.FireRaycast.Demo.Instances.Device
+              props:
+                Name: Base
+                Anchored: true
+                Size: [2, 1, 2]
+                Position: [0, 2.5, 0]
+                Color: [0.2, 0.2, 0.25]
+            - op: createInstance
+              class: Part
+              parent: Workspace.FireRaycast.Demo.Instances.Device
+              props:
+                Name: Body
+                Anchored: false
+                CanCollide: false
+                Size: [1, 1, 2]
+                Position: [0, 3.5, 0]
+                Color: [0.9, 0.3, 0.2]
+            - op: createInstance
+              class: Attachment
+              parent: Workspace.FireRaycast.Demo.Instances.Device.Base
+              props: { Name: HingeAttachment, Position: [0, 0.5, 0], Orientation: [0, 0, 90] }
+            - op: createInstance
+              class: Attachment
+              parent: Workspace.FireRaycast.Demo.Instances.Device.Body
+              props: { Name: HingeAttachment, Position: [0, -0.5, 0], Orientation: [0, 0, 90] }
+            - op: createInstance
+              class: HingeConstraint
+              parent: Workspace.FireRaycast.Demo.Instances.Device.Body
+              props:
+                Attachment0: Workspace.FireRaycast.Demo.Instances.Device.Base.HingeAttachment
+                Attachment1: Workspace.FireRaycast.Demo.Instances.Device.Body.HingeAttachment
+                ActuatorType: Enum.ActuatorType.Motor
+                AngularVelocity: 1
+                MotorMaxTorque: 100000
+          focus:
+            selection: Workspace.FireRaycast.Demo.Instances.Device
+          shot:
+            subject: Workspace.FireRaycast.Demo.Instances.Device
+            framing: close
+
+        - id: s3-origin
+          type: scripted
+          title: Mark where the ray starts
+          body: |
+            An Attachment on the front of the Body marks the laser's origin. Its
+            LookVector is the direction the device points.
+          caption: Body.LaserOrigin
+          action:
+            op: createInstance
+            class: Attachment
+            parent: Workspace.FireRaycast.Demo.Instances.Device.Body
+            props: { Name: LaserOrigin, Position: [0, 0, -1] }
+          focus:
+            selection: Workspace.FireRaycast.Demo.Instances.Device.Body.LaserOrigin
+
+        - id: s4-arrow
+          type: scripted
+          title: Add the hit marker
+          body: |
+            The Arrow moves to each hit and points along the surface normal. Its
+            label shows the name of the part that was hit.
+          caption: Device.Arrow · BillboardGui.TextLabel
+          actions:
+            - op: createInstance
+              class: Part
+              parent: Workspace.FireRaycast.Demo.Instances.Device
+              props:
+                Name: Arrow
+                Anchored: true
+                CanCollide: false
+                Size: [0.2, 0.2, 2]
+                Position: [0, 3.5, -6]
+                Color: [1, 0.85, 0.1]
+                Material: Enum.Material.Neon
+            - op: createInstance
+              class: BillboardGui
+              parent: Workspace.FireRaycast.Demo.Instances.Device.Arrow
+              props: { Size: [0, 120, 0, 30], StudsOffset: [0, 1.5, 0], AlwaysOnTop: true }
+            - op: createInstance
+              class: TextLabel
+              parent: Workspace.FireRaycast.Demo.Instances.Device.Arrow.BillboardGui
+              props:
+                Size: [1, 0, 1, 0]
+                BackgroundTransparency: 1
+                TextScaled: true
+                TextColor3: [1, 1, 1]
+                Text: ''
+          focus:
+            selection: Workspace.FireRaycast.Demo.Instances.Device.Arrow
+
+        - id: s5-targets
+          type: scripted
+          title: Give it things to hit
+          body: Four named objects sit around the device at the height of the laser.
+          caption: Crate · Pillar · Wall · Ball
+          actions:
+            - op: createInstance
+              class: Part
+              parent: Workspace.FireRaycast.Demo.Instances
+              props:
+                { Name: Crate, Anchored: true, Size: [4, 4, 4], Position: [0, 2, -14], Color: [0.6, 0.4, 0.2] }
+            - op: createInstance
+              class: Part
+              parent: Workspace.FireRaycast.Demo.Instances
+              props:
+                { Name: Pillar, Anchored: true, Size: [3, 10, 3], Position: [14, 5, 0], Color: [0.3, 0.5, 0.9] }
+            - op: createInstance
+              class: Part
+              parent: Workspace.FireRaycast.Demo.Instances
+              props:
+                { Name: Wall, Anchored: true, Size: [1, 8, 12], Position: [-14, 4, 0], Color: [0.5, 0.8, 0.4] }
+            - op: createInstance
+              class: Part
+              parent: Workspace.FireRaycast.Demo.Instances
+              props:
+                Name: Ball
+                Anchored: true
+                Shape: Enum.PartType.Ball
+                Size: [5, 5, 5]
+                Position: [0, 3.5, 14]
+                Color: [0.8, 0.3, 0.7]
+          focus:
+            selection: Workspace.FireRaycast.Demo.Instances
+          shot:
+            subject: Workspace.FireRaycast.Demo.Instances
+            framing: overview
+
+    - id: code
+      title: Cast the ray
+      steps:
+        - id: s6-refs
+          type: codeEdit
+          title: Find the device
+          body: |
+            The script finds the device, the laser origin, and the arrow, and sets
+            how far the ray reaches.
+          caption: RAYCAST_DISTANCE = 100
+          code:
+            file: src/shared/Demo/DemoScript.server.luau
+            lines: [[6, 15]]
+            target:
+              path: Workspace.FireRaycast.Demo.DemoScript
+              class: Script
+          focus:
+            script: { file: src/shared/Demo/DemoScript.server.luau, lines: [12, 15] }
+
+        - id: s7-params
+          type: codeEdit
+          title: Ignore the device itself
+          body: RaycastParams exclude the device and the arrow so the ray can't hit them.
+          caption: FilterType = Exclude
+          code:
+            file: src/shared/Demo/DemoScript.server.luau
+            lines: [[6, 20]]
+          focus:
+            script: { file: src/shared/Demo/DemoScript.server.luau, lines: [17, 20] }
+
+        - id: s8-cast
+          type: codeEdit
+          title: Cast and mark the hit
+          body: |
+            The ray starts at the laser origin and runs 100 studs along its
+            LookVector. On a hit, the arrow moves to the hit position, faces
+            along the surface normal, and shows the hit part's name.
+          explain: |
+            `LookVector` has length 1, so multiplying it by the distance gives
+            the full ray. `Workspace:Raycast` returns nil when nothing is hit,
+            which is why the result is checked first.
+          caption: Workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+          code:
+            file: src/shared/Demo/DemoScript.server.luau
+            lines: [[6, 37]]
+          focus:
+            script: { file: src/shared/Demo/DemoScript.server.luau, lines: [22, 37] }
+
+        - id: s9-heartbeat
+          type: codeEdit
+          title: Cast every frame
+          body: Connecting to `Heartbeat` runs the raycast every frame as the device turns.
+          caption: RunService.Heartbeat:Connect(fireRaycast)
+          code:
+            file: src/shared/Demo/DemoScript.server.luau
+          focus:
+            script: { file: src/shared/Demo/DemoScript.server.luau, lines: [39, 40] }
+
+        - id: s10-client
+          type: scripted
+          title: Run it on each client
+          body: The script's RunContext is Client, as in the package, so each player draws their own marker.
+          caption: RunContext = Client
+          action:
+            op: setProperty
+            target: Workspace.FireRaycast.Demo.DemoScript
+            property: RunContext
+            value: Enum.RunContext.Client
+          focus:
+            selection: Workspace.FireRaycast.Demo.DemoScript
+
+        - id: s11-playtest
+          type: playtest
+          title: Watch it sweep
+          body: |
+            Press **Play** (F5). The device turns, and the arrow jumps from the
+            crate to the pillar, ball, and wall, labeled with each name.
