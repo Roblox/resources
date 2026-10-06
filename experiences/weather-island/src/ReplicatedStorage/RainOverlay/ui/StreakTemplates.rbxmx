@@ -1,0 +1,85 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<Item class="Folder" referent="RBX0">
+		<Properties>
+			<string name="Name">StreakTemplates</string>
+		</Properties>
+		<Item class="Frame" referent="RBX1">
+			<Properties>
+				<string name="Name">Far</string>
+				<bool name="Active">false</bool>
+				<Color3 name="BackgroundColor3">
+					<R>0.803921580</R>
+					<G>0.878431380</G>
+					<B>0.972549021</B>
+				</Color3>
+				<float name="BackgroundTransparency">0.819999993</float>
+				<int name="BorderSizePixel">0</int>
+				<UDim2 name="Size">
+					<XS>0</XS>
+					<XO>1</XO>
+					<YS>0</YS>
+					<YO>32</YO>
+				</UDim2>
+			</Properties>
+			<Item class="UIGradient" referent="RBX2">
+				<Properties>
+					<string name="Name">Trail</string>
+					<float name="Rotation">90</float>
+					<NumberSequence name="Transparency">0 1 0 0.4 0.2 0 0.92 0 0 1 0.55 0 </NumberSequence>
+				</Properties>
+			</Item>
+		</Item>
+		<Item class="Frame" referent="RBX3">
+			<Properties>
+				<string name="Name">Mid</string>
+				<bool name="Active">false</bool>
+				<Color3 name="BackgroundColor3">
+					<R>0.803921580</R>
+					<G>0.878431380</G>
+					<B>0.972549021</B>
+				</Color3>
+				<float name="BackgroundTransparency">0.699999988</float>
+				<int name="BorderSizePixel">0</int>
+				<UDim2 name="Size">
+					<XS>0</XS>
+					<XO>2</XO>
+					<YS>0</YS>
+					<YO>62</YO>
+				</UDim2>
+			</Properties>
+			<Item class="UIGradient" referent="RBX4">
+				<Properties>
+					<string name="Name">Trail</string>
+					<float name="Rotation">90</float>
+					<NumberSequence name="Transparency">0 1 0 0.4 0.2 0 0.92 0 0 1 0.55 0 </NumberSequence>
+				</Properties>
+			</Item>
+		</Item>
+		<Item class="Frame" referent="RBX5">
+			<Properties>
+				<string name="Name">Near</string>
+				<bool name="Active">false</bool>
+				<Color3 name="BackgroundColor3">
+					<R>0.803921580</R>
+					<G>0.878431380</G>
+					<B>0.972549021</B>
+				</Color3>
+				<float name="BackgroundTransparency">0.550000012</float>
+				<int name="BorderSizePixel">0</int>
+				<UDim2 name="Size">
+					<XS>0</XS>
+					<XO>3</XO>
+					<YS>0</YS>
+					<YO>112</YO>
+				</UDim2>
+			</Properties>
+			<Item class="UIGradient" referent="RBX6">
+				<Properties>
+					<string name="Name">Trail</string>
+					<float name="Rotation">90</float>
+					<NumberSequence name="Transparency">0 1 0 0.4 0.2 0 0.92 0 0 1 0.55 0 </NumberSequence>
+				</Properties>
+			</Item>
+		</Item>
+	</Item>
+</roblox>
