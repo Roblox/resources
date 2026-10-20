@@ -1,0 +1,1012 @@
+local AssetService = game:GetService("AssetService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Modules = ReplicatedStorage:WaitForChild("Modules")
+local Config = Modules:WaitForChild("Config")
+local BlanksData = require(Config:WaitForChild("BlanksData"))
+local Constants = require(Config:WaitForChild("Constants"))
+
+local MeshManipulation = Modules:WaitForChild("MeshManipulation")
+local MeshUtils = require(MeshManipulation:WaitForChild("MeshUtils"))
+local MeshTypes = require(MeshManipulation:WaitForChild("MeshTypes"))
+local AccessoryShape = require(MeshManipulation:WaitForChild("AccessoryShape"))
+
+export type CageInfo = {
+	cageEditableMesh: EditableMesh,
+	wrapDeformer: WrapDeformer,
+
+	deformedEditableMeshDirty: boolean,
+	deformedEditableMesh: EditableMesh?,
+	deformedMeshRequest: {}?,
+	deformedMeshPending: boolean?,
+
+	-- Map of vertex id to initial vertex position
+	initialVertexPositionsMap: {
+		[number]: Vector3,
+	},
+	cageOrigin: CFrame,
+
+	initialSize: Vector3,
+
+	-- Fields for WrapLayer only
+	isWrapLayer: boolean?,
+}
+
+export type MeshInfo = {
+	meshPart: MeshPart,
+
+	-- If the mesh part is deformable (has a wrap deformer), cageInfo will exist
+	cageInfo: CageInfo?,
+
+	-- If the mesh part is rigid (no wrap deformer), editableMesh will exist
+	editableMesh: EditableMesh?,
+
+	projectionTarget: WrapTextureTransfer?,
+	accessoryShape: AccessoryShape.AccessoryShape?,
+
+	initialCFrame: CFrame,
+
+	kitbashEditableMesh: EditableMesh?,
+	kitbashRevision: number?,
+	kitbashFacesBySlot: { [number]: { number } }?,
+	kitbashVerticesBySlot: { [number]: { [number]: Vector3 } }?,
+
+	-- Scale of the editable mesh from MeshPart size
+	scaleFactor: Vector3,
+}
+
+type ModelMeshInfo = {
+	[MeshPart]: MeshInfo,
+}
+
+local function SetupBodyPart(meshPart: MeshPart, wrapTarget: WrapTarget): MeshInfo
+	-- Create an EditableMesh from the MeshPart
+	local wrapDeformer = meshPart:FindFirstChildWhichIsA("WrapDeformer")
+	if not wrapDeformer then
+		wrapDeformer = Instance.new("WrapDeformer")
+		wrapDeformer.Parent = meshPart
+	end
+
+	local cageEditableMesh: EditableMesh =
+		AssetService:CreateEditableMeshAsync(Content.fromUri(wrapTarget.CageMeshId), {
+			FixedSize = true,
+		})
+	wrapDeformer:SetCageMeshContent(Content.fromObject(cageEditableMesh), wrapTarget.CageOrigin)
+
+	local editableMesh: EditableMesh = wrapDeformer:CreateEditableMeshAsync()
+
+	local initialCageVertexPositions = MeshUtils.GetVertexPositionsMap(cageEditableMesh)
+	local min, max = MeshUtils.GetVertexBounds(initialCageVertexPositions)
+	local initialCageSize = max - min
+
+	local initialVertexPositions = MeshUtils.GetVertexPositions(editableMesh)
+	local scaleFactor = MeshUtils.GetScaleFactor(meshPart, initialVertexPositions)
+
+	local meshInfo: MeshInfo = {
+		meshPart = meshPart,
+
+		cageInfo = {
+			cageEditableMesh = cageEditableMesh,
+			wrapDeformer = wrapDeformer,
+
+			-- Map of vertex id to initial vertex position
+			initialVertexPositionsMap = initialCageVertexPositions,
+			cageOrigin = wrapTarget.CageOrigin,
+
+			initialSize = initialCageSize,
+
+			deformedEditableMeshDirty = false,
+			deformedEditableMesh = editableMesh,
+		},
+
+		initialCFrame = meshPart.CFrame,
+		scaleFactor = scaleFactor,
+	}
+
+	return meshInfo
+end
+
+local function SetupProjectionMeshPart(meshPart: MeshPart, wrapTextureTransfer: WrapTextureTransfer): MeshInfo
+	local scaleFactor = meshPart.MeshSize / meshPart.Size
+
+	return {
+		meshPart = meshPart,
+		projectionTarget = wrapTextureTransfer,
+		initialCFrame = meshPart.CFrame,
+		scaleFactor = scaleFactor,
+	}
+end
+
+-- When setting up a MeshPart to support kitbashing, we set up a
+-- texture atlas as its TextureContent so we can easily add textures
+-- of kitbashed pieces. This means the UVs must be remapped to the top
+-- left grid space of the atlas
+local function RemapUVsForKitbashAtlas(editableMesh: EditableMesh)
+	local uvs = editableMesh:GetUVs()
+	for _, uvId in uvs do
+		local uvCoord = editableMesh:GetUV(uvId)
+		local remappedUV = Vector2.new(uvCoord.X / Constants.ATLAS_GRID_SIZE, uvCoord.Y / Constants.ATLAS_GRID_SIZE)
+		editableMesh:SetUV(uvId, remappedUV)
+	end
+end
+
+local function SetupRigidMesh(meshPart: MeshPart, kitbashingEnabled: boolean): MeshInfo
+	local editableMesh = AssetService:CreateEditableMeshAsync(Content.fromUri(meshPart.MeshId), {
+		FixedSize = not kitbashingEnabled,
+	})
+
+	if kitbashingEnabled then
+		RemapUVsForKitbashAtlas(editableMesh)
+	end
+
+	local newMeshPart = AssetService:CreateMeshPartAsync(Content.fromObject(editableMesh))
+
+	newMeshPart.Size = meshPart.Size
+	newMeshPart.CFrame = meshPart.CFrame
+	newMeshPart.TextureContent = meshPart.TextureContent
+	meshPart:ApplyMesh(newMeshPart)
+	newMeshPart:Destroy()
+
+	local initialVertexPositions = MeshUtils.GetVertexPositions(editableMesh)
+	local scaleFactor = MeshUtils.GetScaleFactor(meshPart, initialVertexPositions)
+
+	local meshInfo: MeshInfo = {
+		meshPart = meshPart,
+		editableMesh = editableMesh,
+		initialCFrame = meshPart.CFrame,
+		scaleFactor = scaleFactor,
+	}
+
+	return meshInfo
+end
+
+local function SetupLayeredClothingPart(
+	meshPart: MeshPart,
+	wrapLayer: WrapLayer,
+	model: Model,
+	kitbashingEnabled: boolean
+): MeshInfo
+	-- Create the WrapDeformer for the outer cage
+	local wrapDeformer = meshPart:FindFirstChildWhichIsA("WrapDeformer")
+	if not wrapDeformer then
+		wrapDeformer = Instance.new("WrapDeformer")
+		wrapDeformer.Parent = meshPart
+	end
+
+	-- Kitbashing updates the EditableMesh of the MeshPart directly without using WrapDeformers
+	-- Remap the UVs and reapply the mesh
+	local editableMesh = AssetService:CreateEditableMeshAsync(Content.fromUri(meshPart.MeshId), {
+		FixedSize = not kitbashingEnabled,
+	})
+	if kitbashingEnabled then
+		RemapUVsForKitbashAtlas(editableMesh)
+	end
+	local newMeshPart = AssetService:CreateMeshPartAsync(Content.fromObject(editableMesh))
+	newMeshPart.Size = meshPart.Size
+	newMeshPart.CFrame = meshPart.CFrame
+	newMeshPart.TextureContent = meshPart.TextureContent
+	meshPart:ApplyMesh(newMeshPart)
+	newMeshPart:Destroy()
+
+	-- Set up outer cage (similar to WrapTarget)
+	local outerCageEditableMesh: EditableMesh =
+		AssetService:CreateEditableMeshAsync(Content.fromUri(wrapLayer.CageMeshId), {
+			FixedSize = true,
+		})
+	local cageOrigin = wrapLayer.CageOrigin
+	wrapDeformer:SetCageMeshContent(Content.fromObject(outerCageEditableMesh), cageOrigin)
+
+	-- Create a deformed mesh based on the outer cage
+	local wrapDeformerEditableMesh: EditableMesh = wrapDeformer:CreateEditableMeshAsync()
+
+	-- Set up the rest of the structure as before
+	local initialOuterCageVertexPositions = MeshUtils.GetVertexPositionsMap(outerCageEditableMesh)
+	local min, max = MeshUtils.GetVertexBounds(initialOuterCageVertexPositions)
+	local initialCageSize = max - min
+	local initialVertexPositions = MeshUtils.GetVertexPositions(wrapDeformerEditableMesh)
+	local scaleFactor = MeshUtils.GetScaleFactor(meshPart, initialVertexPositions)
+
+	local meshInfo: MeshInfo = {
+		meshPart = meshPart,
+		cageInfo = {
+			cageEditableMesh = outerCageEditableMesh,
+			wrapDeformer = wrapDeformer,
+			initialVertexPositionsMap = initialOuterCageVertexPositions,
+			cageOrigin = cageOrigin,
+
+			initialSize = initialCageSize,
+			deformedEditableMeshDirty = false,
+			deformedEditableMesh = wrapDeformerEditableMesh,
+
+			-- New fields for WrapLayer
+			isWrapLayer = true,
+		},
+		kitbashEditableMesh = editableMesh,
+		initialCFrame = meshPart.CFrame,
+		scaleFactor = scaleFactor,
+	}
+
+	return meshInfo
+end
+
+local function SetupModelMeshes(
+	model: Model,
+	individualPartsNames: { [string]: boolean },
+	kitbashingEnabled: boolean
+): ModelMeshInfo
+	local newModelInfo: ModelMeshInfo = {}
+
+	for _, descendant in model:GetDescendants() do
+		if not descendant:IsA("MeshPart") then
+			continue
+		end
+
+		if descendant.Name == "PrimaryPart" then
+			continue
+		end
+
+		-- Only include parts of the model that we want to edit.
+		if not individualPartsNames[descendant.Name] then
+			continue
+		end
+
+		local wrapTarget = descendant:FindFirstChildOfClass("WrapTarget")
+		local wrapLayer = descendant:FindFirstChildOfClass("WrapLayer")
+		local projectionTransfer = descendant:FindFirstChild(Constants.MAKEUP_PROJECTION_TRANSFER_NAME, true)
+		if projectionTransfer and projectionTransfer:IsA("WrapTextureTransfer") then
+			newModelInfo[descendant] = SetupProjectionMeshPart(descendant, projectionTransfer)
+		elseif wrapTarget then
+			newModelInfo[descendant] = SetupBodyPart(descendant, wrapTarget)
+		elseif wrapLayer then
+			newModelInfo[descendant] = SetupLayeredClothingPart(descendant, wrapLayer, model, kitbashingEnabled)
+		else
+			newModelInfo[descendant] = SetupRigidMesh(descendant, kitbashingEnabled)
+		end
+	end
+
+	return newModelInfo
+end
+
+export type LineWidgetControl = {
+	view: string,
+	controlType: "Line",
+	meshPart: MeshPart,
+
+	controlP1: Vector3,
+	controlP2: Vector3,
+
+	startLinearProgress: number,
+	linearProgress: number,
+}
+
+export type PlaneWidgetControl = {
+	view: string,
+	controlType: "Plane",
+	meshPart: MeshPart,
+
+	controlP1: Vector3,
+	controlP2: Vector3,
+	controlP3: Vector3,
+	controlP4: Vector3,
+
+	normal: Vector3,
+}
+
+export type WidgetControl = LineWidgetControl | PlaneWidgetControl
+
+export type WidgetData = {
+	name: string,
+	widgetType: string,
+
+	startPosition: Vector3,
+	position: Vector3,
+	radius: number,
+	isSymmetrical: boolean,
+
+	meshPart: MeshPart,
+
+	mirroredPointName: string?,
+	mirroredWidget: WidgetData?,
+
+	-- If this widget is a mirrored copy of another widget
+	isMirror: boolean?,
+
+	deformsPartNames: { string },
+
+	axisStart: Ray?,
+	axisEnd: Vector3?,
+
+	meshSpaceAxisStart: Ray?,
+	meshSpaceAxisEnd: Vector3?,
+
+	controls: { WidgetControl },
+	activeControl: WidgetControl?,
+}
+
+export type ControlGroup = {
+	name: string,
+
+	widgets: {
+		[string]: WidgetData,
+	},
+}
+
+export type WidgetControlGroupMap = {
+	[string]: ControlGroup,
+}
+
+local function BuildWidgetControl(
+	controlFolder: Folder,
+	controlMeshPart: MeshPart,
+	controlPoint: Part,
+	worldMeshPart: MeshPart,
+	startPosition: Vector3
+): WidgetControl
+	local controlTypeValue = controlFolder:FindFirstChild("ControlType") -- StringValue
+	local controlType = controlTypeValue.Value
+
+	if controlType == Constants.CONTROL_TYPE_LINE then
+		local p1 = controlFolder:FindFirstChild("P1")
+		local p2 = controlFolder:FindFirstChild("P2")
+
+		local control: LineWidgetControl = {
+			view = controlFolder.Name,
+			controlType = Constants.CONTROL_TYPE_LINE,
+			meshPart = worldMeshPart,
+
+			controlP1 = controlMeshPart.CFrame:PointToObjectSpace(p1.CFrame.Position),
+			controlP2 = controlMeshPart.CFrame:PointToObjectSpace(p2.CFrame.Position),
+
+			startLinearProgress = 0,
+			linearProgress = 0,
+		}
+
+		-- Record the "starting progress" so that we can compare it to the current progress.
+		-- EG: The widget starts at 50% along the line, and the user can move it to 0% or 100% along the line to shrink or stretch the mesh.
+		-- Or, the widget starts at 0% and the user can move it to 100% to stretch the mesh.
+		local lineDirection = (control.controlP2 - control.controlP1)
+		control.startLinearProgress = (startPosition - control.controlP1).Magnitude / lineDirection.Magnitude
+		control.linearProgress = control.startLinearProgress
+
+		return control
+	elseif controlType == Constants.CONTROL_TYPE_PLANE then
+		local p1 = controlFolder:FindFirstChild("P1")
+		local p2 = controlFolder:FindFirstChild("P2")
+		local p3 = controlFolder:FindFirstChild("P3")
+		local p4 = controlFolder:FindFirstChild("P4")
+
+		local normalObj = controlFolder:FindFirstChild("Normal")
+
+		local control: PlaneWidgetControl = {
+			view = controlFolder.Name,
+			controlType = Constants.CONTROL_TYPE_PLANE,
+			meshPart = worldMeshPart,
+
+			controlP1 = controlMeshPart.CFrame:PointToObjectSpace(p1.CFrame.Position),
+			controlP2 = controlMeshPart.CFrame:PointToObjectSpace(p2.CFrame.Position),
+			controlP3 = controlMeshPart.CFrame:PointToObjectSpace(p3.CFrame.Position),
+			controlP4 = controlMeshPart.CFrame:PointToObjectSpace(p4.CFrame.Position),
+
+			normal = (normalObj.CFrame.Position - controlPoint.CFrame.Position).Unit,
+		}
+
+		return control
+	end
+
+	error("Invalid control type " .. controlType)
+end
+
+local function GetControlPointValue(controlPoint: Part, valueName: string, defaultValue: any)
+	local value = controlPoint:FindFirstChild(valueName)
+	if value == nil then
+		return defaultValue
+	end
+
+	return value.Value
+end
+
+local function BuildWidgetData(
+	controlMeshPart: MeshPart,
+	controlPoint: Part,
+	worldMeshPart: MeshPart,
+	modelMeshInfo: ModelMeshInfo
+): WidgetData
+	-- There is no existing widget for this control point. Let's set one up.
+	local objectSpaceCFrame = controlMeshPart.CFrame:ToObjectSpace(controlPoint.CFrame)
+
+	local widgetData: WidgetData = {
+		name = controlPoint.Name,
+		widgetType = GetControlPointValue(controlPoint, "WidgetType", Constants.WIDGET_TYPE_SPHERE),
+
+		startPosition = objectSpaceCFrame.Position,
+		position = objectSpaceCFrame.Position,
+		radius = GetControlPointValue(controlPoint, "Radius", 1),
+		isSymmetrical = GetControlPointValue(controlPoint, "IsSymmetrical", false),
+
+		meshPart = worldMeshPart,
+
+		mirroredPointName = GetControlPointValue(controlPoint, "MirroredPoint", nil),
+		mirroredWidget = nil,
+
+		deformsPartNames = { worldMeshPart.Name },
+
+		axisStart = nil,
+		axisEnd = nil,
+
+		meshSpaceAxisStart = nil,
+		meshSpaceAxisEnd = nil,
+
+		controls = {},
+	}
+
+	local deformsAdditionalPartsFolder = controlPoint:FindFirstChild("DeformsAdditionalParts")
+	if deformsAdditionalPartsFolder ~= nil then
+		for _, child in pairs(deformsAdditionalPartsFolder:GetChildren()) do
+			if child:IsA("StringValue") then
+				widgetData.deformsPartNames[#widgetData.deformsPartNames + 1] = child.Value
+			end
+		end
+	end
+
+	-- Some widgets define an axis in addition to an origin point
+	local rayObject = controlPoint:FindFirstChild("Axis")
+	local axisEndObject = controlPoint:FindFirstChild("AxisEnd")
+	if rayObject ~= nil then
+		local objectSpaceRayCFrame = controlMeshPart.CFrame:ToObjectSpace(rayObject.CFrame)
+		widgetData.axisStart = Ray.new(objectSpaceRayCFrame.Position, objectSpaceRayCFrame.lookVector)
+		if axisEndObject ~= nil then
+			widgetData.axisEnd = controlMeshPart.CFrame:ToObjectSpace(axisEndObject.CFrame).Position
+		end
+	end
+
+	-- Widgets can have different controls for different views
+	-- EG: A chin control might be only draggable along the y-axis in front view, and along the x-axis in side view
+	for _, controlChild in pairs(controlPoint:GetChildren()) do
+		if not controlChild:IsA("Folder") then
+			continue
+		end
+
+		local control =
+			BuildWidgetControl(controlChild, controlMeshPart, controlPoint, worldMeshPart, widgetData.startPosition)
+		table.insert(widgetData.controls, control)
+	end
+
+	-- Calculate the dynamic mesh space axis for the widget
+	-- This is useful later on when deforming vertices
+	local meshInfo: MeshInfo = modelMeshInfo[widgetData.meshPart]
+	if
+		widgetData.widgetType == Constants.WIDGET_TYPE_CYLINDER
+		or widgetData.widgetType == Constants.WIDGET_TYPE_AXIS_STRETCH
+	then
+		assert(widgetData.axisStart ~= nil, "Cylinder and AxisStretch widgets must have an axis defined")
+		assert(meshInfo.cageInfo, "CageInfo must exist for deformable mesh parts")
+
+		widgetData.meshSpaceAxisStart = Ray.new(
+			MeshUtils.LocalSpaceToEditableMeshSpace(
+				widgetData.axisStart.Origin,
+				worldMeshPart,
+				meshInfo.cageInfo.initialVertexPositionsMap
+			),
+			widgetData.axisStart.Direction
+		)
+	elseif widgetData.widgetType == Constants.WIDGET_TYPE_MUSCLE then
+		assert(widgetData.axisStart ~= nil, "Muscle widgets must have an axis defined")
+		assert(meshInfo.cageInfo, "CageInfo must exist for deformable mesh parts")
+
+		widgetData.meshSpaceAxisStart = Ray.new(
+			MeshUtils.LocalSpaceToEditableMeshSpace(
+				widgetData.axisStart.Origin,
+				worldMeshPart,
+				meshInfo.cageInfo.initialVertexPositionsMap
+			),
+			widgetData.axisStart.Direction
+		)
+		widgetData.meshSpaceAxisEnd = MeshUtils.LocalSpaceToEditableMeshSpace(
+			widgetData.axisEnd,
+			worldMeshPart,
+			meshInfo.cageInfo.initialVertexPositionsMap
+		)
+	end
+
+	return widgetData
+end
+
+local function CreateMirroredControls(currentControls: { WidgetControl }, targetMeshPart: MeshPart): { WidgetControl }
+	local mirroredControls: { WidgetControl } = {}
+
+	for _, widgetControl: WidgetControl in pairs(currentControls) do
+		local mirroredWidgetControl = {}
+		mirroredWidgetControl.view = widgetControl.view
+		mirroredWidgetControl.controlType = widgetControl.controlType
+		mirroredWidgetControl.meshPart = targetMeshPart
+		mirroredWidgetControl.controlP1 = widgetControl.controlP1 * Vector3.new(-1, 1, 1)
+		mirroredWidgetControl.controlP2 = widgetControl.controlP2 * Vector3.new(-1, 1, 1)
+
+		if widgetControl.controlType == "Line" then
+			mirroredWidgetControl.startLinearProgress = widgetControl.startLinearProgress
+			mirroredWidgetControl.linearProgress = widgetControl.linearProgress
+		elseif widgetControl.controlType == "Plane" then
+			mirroredWidgetControl.controlP3 = widgetControl.controlP3 * Vector3.new(-1, 1, 1)
+			mirroredWidgetControl.controlP4 = widgetControl.controlP4 * Vector3.new(-1, 1, 1)
+			mirroredWidgetControl.normal = widgetControl.normal * Vector3.new(-1, 1, 1)
+		end
+
+		table.insert(mirroredControls, mirroredWidgetControl)
+	end
+
+	return mirroredControls
+end
+
+local function MirrorWidgetAxisProperties(
+	mirroredWidget: WidgetData,
+	widgetData: WidgetData,
+	modelMeshInfo: ModelMeshInfo
+)
+	mirroredWidget.widgetType = widgetData.widgetType
+	if widgetData.axisStart ~= nil then
+		local rayOrigin = widgetData.axisStart.Origin * Vector3.new(-1, 1, 1)
+		local rayDirection = widgetData.axisStart.Direction * Vector3.new(-1, 1, 1)
+		mirroredWidget.axisStart = Ray.new(rayOrigin, rayDirection)
+
+		if widgetData.axisEnd ~= nil then
+			mirroredWidget.axisEnd = widgetData.axisEnd * Vector3.new(-1, 1, 1)
+		end
+
+		local meshInfo: MeshInfo = modelMeshInfo[mirroredWidget.meshPart]
+		if
+			mirroredWidget.widgetType == Constants.WIDGET_TYPE_CYLINDER
+			or mirroredWidget.widgetType == Constants.WIDGET_TYPE_AXIS_STRETCH
+		then
+			assert(mirroredWidget.axisStart ~= nil, "Cylinder and AxisStretch widgets must have an axis defined")
+			assert(meshInfo.cageInfo, "CageInfo must exist for deformable mesh parts")
+
+			mirroredWidget.meshSpaceAxisStart = Ray.new(
+				MeshUtils.LocalSpaceToEditableMeshSpace(
+					mirroredWidget.axisStart.Origin,
+					mirroredWidget.meshPart,
+					meshInfo.cageInfo.initialVertexPositionsMap
+				),
+				mirroredWidget.axisStart.Direction
+			)
+		elseif mirroredWidget.widgetType == Constants.WIDGET_TYPE_MUSCLE then
+			assert(mirroredWidget.axisStart ~= nil, "Muscle widgets must have an axis defined")
+			assert(mirroredWidget.axisEnd ~= nil, "Muscle widgets must have an axis defined")
+			assert(meshInfo.cageInfo, "CageInfo must exist for deformable mesh parts")
+
+			mirroredWidget.meshSpaceAxisStart = Ray.new(
+				MeshUtils.LocalSpaceToEditableMeshSpace(
+					mirroredWidget.axisStart.Origin,
+					mirroredWidget.meshPart,
+					meshInfo.cageInfo.initialVertexPositionsMap
+				),
+				mirroredWidget.axisStart.Direction
+			)
+			mirroredWidget.meshSpaceAxisEnd = MeshUtils.LocalSpaceToEditableMeshSpace(
+				mirroredWidget.axisEnd,
+				mirroredWidget.meshPart,
+				meshInfo.cageInfo.initialVertexPositionsMap
+			)
+		end
+	end
+end
+
+-- Returns a bool indicating whether the mirrored widget was created
+local function GetMirroredWidget(controlGroup: ControlGroup, widgetData: WidgetData): (WidgetData, boolean)
+	if widgetData.mirroredPointName and controlGroup.widgets[widgetData.mirroredPointName] then
+		return controlGroup.widgets[widgetData.mirroredPointName], false
+	end
+
+	-- Virtual mirrored widget needs to be created
+	local virtualWidget: WidgetData = {
+		name = widgetData.name .. "_Mirrored",
+		widgetType = widgetData.widgetType,
+
+		startPosition = widgetData.startPosition * Vector3.new(-1, 1, 1),
+		position = widgetData.position * Vector3.new(-1, 1, 1),
+		radius = widgetData.radius,
+		isSymmetrical = widgetData.isSymmetrical,
+
+		meshPart = widgetData.meshPart,
+
+		isMirror = true,
+
+		deformsPartNames = widgetData.deformsPartNames,
+
+		axisStart = widgetData.axisStart,
+		axisEnd = widgetData.axisEnd,
+
+		controls = {},
+	}
+
+	return virtualWidget, true
+end
+
+local function LinkMirroredWidgets(controlGroup: ControlGroup, modelMeshInfo: ModelMeshInfo)
+	-- Loop over all widgets and link those that are mirrors of each other.
+	-- EG: A left lower arm widget should have a reference to the corresponding right lower arm widget,
+	-- so that when we move one, the other one automatically moves.
+	local newVirtualWidgets = {}
+
+	for _, widgetData: WidgetData in pairs(controlGroup.widgets) do
+		if not widgetData.isSymmetrical then
+			continue
+		end
+
+		if widgetData.isMirror then
+			continue
+		end
+
+		local mirroredWidget: WidgetData, wasCreated = GetMirroredWidget(controlGroup, widgetData)
+
+		widgetData.mirroredWidget = mirroredWidget
+		mirroredWidget.mirroredWidget = widgetData
+
+		mirroredWidget.isMirror = true
+
+		mirroredWidget.startPosition = widgetData.startPosition * Vector3.new(-1, 1, 1)
+		mirroredWidget.position = widgetData.position * Vector3.new(-1, 1, 1)
+
+		mirroredWidget.widgetType = widgetData.widgetType
+
+		-- Mirrored widgets should have identical types/parameters.
+		-- If this widget has additional info (like a cylinder axis) we should copy that across to the mirrored widget.
+		MirrorWidgetAxisProperties(mirroredWidget, widgetData, modelMeshInfo)
+
+		mirroredWidget.controls = CreateMirroredControls(widgetData.controls, mirroredWidget.meshPart)
+
+		if wasCreated then
+			newVirtualWidgets[mirroredWidget.name] = mirroredWidget
+		end
+	end
+
+	-- Add the new virtual widgets to the control group
+	for _, widgetData: WidgetData in pairs(newVirtualWidgets) do
+		controlGroup.widgets[widgetData.name] = widgetData
+	end
+end
+
+local function BuildControlGroup(model, controlGroupFolder: Folder, modelMeshInfo: ModelMeshInfo): ControlGroup
+	local controlGroup: ControlGroup = {
+		name = controlGroupFolder.Name,
+		widgets = {},
+	}
+
+	for _, child in pairs(controlGroupFolder:GetChildren()) do
+		if child:IsA("MeshPart") == false then
+			error("Invalid child of mesh edit control group!")
+		end
+		local meshPartName = child.Name
+
+		local worldMeshPart = model:FindFirstChild(meshPartName, true)
+		if worldMeshPart == nil then
+			error("Could not find in-world meshpart " .. meshPartName .. " for mesh edit controls!")
+		end
+
+		for _, controlPoint in pairs(child:GetChildren()) do
+			if controlPoint:IsA("Part") == false then
+				continue
+			end
+
+			local widgetData = BuildWidgetData(child, controlPoint, worldMeshPart, modelMeshInfo)
+			controlGroup.widgets[controlPoint.Name] = widgetData
+		end
+	end
+
+	LinkMirroredWidgets(controlGroup, modelMeshInfo)
+
+	return controlGroup
+end
+
+local function BuildWidgetInfo(model, meshEditControlGroups, modelMeshInfo: ModelMeshInfo): WidgetControlGroupMap
+	local widgetControlGroupMap: WidgetControlGroupMap = {}
+
+	for _, controlGroup in meshEditControlGroups:GetChildren() do
+		widgetControlGroupMap[controlGroup.Name] = BuildControlGroup(model, controlGroup, modelMeshInfo)
+	end
+
+	return widgetControlGroupMap
+end
+
+local function UpdateMeshScaleFactor(meshInfo: MeshInfo, meshPart: MeshPart)
+	local vertexPositions
+	if meshInfo.cageInfo then
+		vertexPositions = MeshUtils.GetVertexPositions(meshInfo.cageInfo.deformedEditableMesh)
+	else
+		assert(meshInfo.editableMesh ~= nil, "EditableMesh or Deformed Mesh not found for meshPart " .. meshPart.Name)
+		vertexPositions = MeshUtils.GetVertexPositions(meshInfo.editableMesh :: EditableMesh)
+	end
+	meshInfo.scaleFactor = MeshUtils.GetScaleFactor(meshPart, vertexPositions)
+end
+
+local MeshInfo = {}
+MeshInfo.__index = MeshInfo
+
+function MeshInfo.new(model, blankData: BlanksData.BlankData)
+	local self = setmetatable({}, MeshInfo)
+
+	self.modelMeshInfo = SetupModelMeshes(model, blankData.individualPartsNames, blankData.enableKitbashing)
+
+	if blankData.meshEditControlGroups then
+		self.widgetInfo = BuildWidgetInfo(model, blankData.meshEditControlGroups, self.modelMeshInfo)
+	else
+		self.widgetInfo = {}
+	end
+
+	return self
+end
+
+function MeshInfo:Destroy()
+	if self.destroyed then
+		return
+	end
+	self.destroyed = true
+	for _, meshInfo: MeshInfo in pairs(self.modelMeshInfo) do
+		if meshInfo.cageInfo then
+			meshInfo.cageInfo.cageEditableMesh:Destroy()
+			meshInfo.cageInfo.deformedMeshRequest = nil
+			if meshInfo.cageInfo.deformedEditableMesh then
+				meshInfo.cageInfo.deformedEditableMesh:Destroy()
+				meshInfo.cageInfo.deformedEditableMesh = nil
+			end
+		elseif meshInfo.editableMesh then
+			meshInfo.editableMesh:Destroy()
+		end
+
+		if meshInfo.kitbashEditableMesh then
+			meshInfo.kitbashEditableMesh:Destroy()
+		end
+	end
+end
+
+-- Release disposable raycast/projection snapshots; keep mutable geometry alive.
+function MeshInfo:SuspendDeformedMeshes()
+	self.deformedMeshesSuspended = true
+	for _, meshInfo in self.modelMeshInfo do
+		local cage = meshInfo.cageInfo
+		if cage then
+			cage.deformedMeshRequest = nil
+			if cage.deformedEditableMesh then
+				cage.deformedEditableMesh:Destroy()
+				cage.deformedEditableMesh = nil
+			end
+		end
+	end
+end
+
+function MeshInfo:ResumeDeformedMeshes()
+	assert(not self.destroyed, "MeshInfo was destroyed")
+	self.deformedMeshesSuspended = false
+end
+
+function MeshInfo:GetModelMeshInfo(): ModelMeshInfo
+	return self.modelMeshInfo
+end
+
+function MeshInfo:GetDeformedEditableMesh(meshPart: MeshPart): EditableMesh
+	local meshInfo: MeshInfo = self.modelMeshInfo[meshPart]
+	if not meshInfo then
+		error("MeshInfo not found for meshPart " .. meshPart.Name)
+	end
+
+	assert(meshInfo.cageInfo, "CageInfo must exist for deformable meshPart " .. meshPart.Name)
+
+	local cage = meshInfo.cageInfo
+	-- Share one pending snapshot across readers.
+	while cage.deformedMeshPending and not self.destroyed and not self.deformedMeshesSuspended do
+		task.wait()
+	end
+	assert(not self.destroyed and not self.deformedMeshesSuspended, "Editing mesh is unavailable while suspended")
+	if cage.deformedEditableMeshDirty or not cage.deformedEditableMesh then
+		local request = {}
+		cage.deformedMeshRequest = request
+		cage.deformedMeshPending = true
+		if cage.deformedEditableMesh then
+			cage.deformedEditableMesh:Destroy()
+			cage.deformedEditableMesh = nil
+		end
+		local success, mesh = pcall(cage.wrapDeformer.CreateEditableMeshAsync, cage.wrapDeformer)
+		cage.deformedMeshPending = false
+		if not success then
+			error(mesh, 0)
+		end
+		if self.destroyed or cage.deformedMeshRequest ~= request then
+			if mesh then
+				mesh:Destroy()
+			end
+			if not self.destroyed and not self.deformedMeshesSuspended then
+				return self:GetDeformedEditableMesh(meshPart)
+			end
+			error("Editing mesh preparation was cancelled")
+		end
+		assert(mesh, "Could not rebuild editing mesh")
+		cage.deformedEditableMesh = mesh
+		cage.deformedEditableMeshDirty = false
+	end
+
+	return cage.deformedEditableMesh
+end
+
+function MeshInfo:GetEditableMesh(meshPart: MeshPart): EditableMesh
+	local meshInfo: MeshInfo = self.modelMeshInfo[meshPart]
+	if not meshInfo then
+		error("MeshInfo not found for meshPart " .. meshPart.Name)
+	end
+
+	if meshInfo.cageInfo then
+		return self:GetDeformedEditableMesh(meshPart)
+	else
+		assert(meshInfo.editableMesh ~= nil, "EditableMesh or Deformed Mesh not found for meshPart " .. meshPart.Name)
+		return meshInfo.editableMesh
+	end
+end
+
+function MeshInfo:GetProjectionTarget(meshPart: MeshPart): MeshTypes.ProjectionTarget
+	local meshInfo: MeshInfo = self.modelMeshInfo[meshPart]
+	if not meshInfo then
+		error("MeshInfo not found for meshPart " .. meshPart.Name)
+	end
+
+	if meshInfo.projectionTarget then
+		return meshInfo.projectionTarget
+	end
+
+	return self:GetEditableMesh(meshPart)
+end
+
+function MeshInfo:HasMeshPartByName(meshPartName: string): boolean
+	for meshPart, _ in pairs(self.modelMeshInfo) do
+		if meshPart.Name == meshPartName then
+			return true
+		end
+	end
+	return false
+end
+
+function MeshInfo:GetMeshInfoByName(meshPartName: string): MeshInfo
+	for meshPart, meshInfo: MeshInfo in pairs(self.modelMeshInfo) do
+		if meshPart.Name == meshPartName then
+			return meshInfo
+		end
+	end
+
+	error("MeshInfo not found for meshPart " .. meshPartName)
+end
+
+function MeshInfo:MarkMeshPartDirty(meshPart: MeshPart)
+	local meshInfo: MeshInfo = self.modelMeshInfo[meshPart]
+	if not meshInfo then
+		error("MeshInfo not found for meshPart " .. meshPart.Name)
+	end
+
+	assert(meshInfo.cageInfo, "CageInfo must exist for deformable mesh parts")
+
+	meshInfo.cageInfo.deformedEditableMeshDirty = true
+	meshInfo.cageInfo.deformedMeshRequest = nil
+end
+
+-- Topology edits need both a solver refresh and a new raycast/preview snapshot.
+function MeshInfo:RefreshKitbashMesh(meshPart: MeshPart)
+	local meshInfo = self.modelMeshInfo[meshPart]
+	meshInfo.kitbashRevision = (meshInfo.kitbashRevision or 0) + 1
+	if meshInfo.cageInfo then
+		local cageMesh = meshInfo.cageInfo.cageEditableMesh
+		local vertexId = cageMesh:GetVertices()[1]
+		if vertexId then
+			cageMesh:SetPosition(vertexId, cageMesh:GetPosition(vertexId))
+		end
+		self:MarkMeshPartDirty(meshPart)
+	end
+end
+
+function MeshInfo:UpdateDeformedEditableMeshes()
+	-- Suspended snapshots are rebuilt on demand after the context resumes.
+	if self.deformedMeshesSuspended then
+		return
+	end
+	for meshPart, meshInfo: MeshInfo in pairs(self.modelMeshInfo) do
+		if not meshInfo.cageInfo then
+			continue
+		end
+
+		self:GetDeformedEditableMesh(meshPart)
+	end
+end
+
+function MeshInfo:GetScaleFactorMap(): MeshTypes.ScaleFactorMap
+	local scaleFactorMap: MeshTypes.ScaleFactorMap = {}
+
+	for meshPart, meshInfo: MeshInfo in pairs(self.modelMeshInfo) do
+		scaleFactorMap[meshPart] = meshInfo.scaleFactor
+	end
+
+	return scaleFactorMap
+end
+
+function MeshInfo:GetEditableMeshMap(): MeshTypes.EditableMeshMap
+	local editableMeshMap: MeshTypes.EditableMeshMap = {}
+
+	for meshPart, meshInfo: MeshInfo in pairs(self.modelMeshInfo) do
+		if meshInfo.cageInfo then
+			editableMeshMap[meshPart] = self:GetDeformedEditableMesh(meshPart)
+		elseif not meshInfo.projectionTarget then
+			assert(
+				meshInfo.editableMesh ~= nil,
+				"EditableMesh or Deformed Mesh not found for meshPart " .. meshPart.Name
+			)
+			editableMeshMap[meshPart] = meshInfo.editableMesh
+		end
+	end
+
+	return editableMeshMap
+end
+
+function MeshInfo:GetProjectionTargetMap(): MeshTypes.ProjectionTargetMap
+	local projectionTargetMap: MeshTypes.ProjectionTargetMap = {}
+
+	for meshPart, _ in pairs(self.modelMeshInfo) do
+		projectionTargetMap[meshPart] = self:GetProjectionTarget(meshPart)
+	end
+
+	return projectionTargetMap
+end
+
+function MeshInfo:GetKitbashEditableMeshMap(): MeshTypes.EditableMeshMap
+	local editableMeshMap: MeshTypes.EditableMeshMap = {}
+
+	for meshPart, meshInfo: MeshInfo in pairs(self.modelMeshInfo) do
+		if meshInfo.cageInfo then
+			-- Layered Accessories
+			editableMeshMap[meshPart] = meshInfo.kitbashEditableMesh
+		else
+			-- Rigid Accessories
+			editableMeshMap[meshPart] = meshInfo.editableMesh
+		end
+	end
+
+	return editableMeshMap
+end
+
+function MeshInfo:GetControlGroup(controlGroupName: string): ControlGroup
+	local controlGroup = self.widgetInfo[controlGroupName]
+	if controlGroup == nil then
+		error("Control group " .. controlGroupName .. " not found")
+	end
+
+	return controlGroup
+end
+
+function MeshInfo:HasWidgetByName(widgetName: string): boolean
+	for _, controlGroup in pairs(self.widgetInfo) do
+		if controlGroup.widgets[widgetName] then
+			return true
+		end
+	end
+
+	return false
+end
+
+function MeshInfo:GetWidgetByName(widgetName): WidgetData
+	for _, controlGroup in pairs(self.widgetInfo) do
+		local widget = controlGroup.widgets[widgetName]
+		if widget then
+			return widget
+		end
+	end
+
+	error("Widget " .. widgetName .. " not found")
+end
+
+function MeshInfo:GetAllWidgets(): { [string]: WidgetData }
+	local widgets = {}
+	for _, controlGroup in pairs(self.widgetInfo) do
+		for _, widget in pairs(controlGroup.widgets) do
+			widgets[widget.name] = widget
+		end
+	end
+
+	return widgets
+end
+
+export type MeshInfoClass = typeof(MeshInfo)
+
+return MeshInfo
