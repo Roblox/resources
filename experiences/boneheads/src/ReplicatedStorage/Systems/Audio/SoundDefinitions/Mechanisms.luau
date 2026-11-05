@@ -17,7 +17,7 @@ return {
 	},
 	{
 		name = "PlateToggled",
-		assetId = "rbxassetid://138552838100756",
+		assetId = "rbxassetid://111864895055604",
 		volume = 0.15,
 		rollOffMinDistance = 10,
 		rollOffMaxDistance = 50,

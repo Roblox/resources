@@ -58,7 +58,7 @@ local function isDisllowedAbility(name: string): boolean
 	if
 		name == "Jumping"
 		or name == "Sitting"
-		or name == "FreeFall"
+		or name == "Freefall"
 		or name == "Swimming" -- Disabled ability, but is still disallowed
 		or name == "FallingDown" -- Disabled ability, but is still disallowed
 		or name == "Climbing" -- Disabled ability, but is still disallowed

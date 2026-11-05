@@ -87,7 +87,7 @@ local CarryingSensor: AvatarAbilities.SensorRegistration = {
 			end
 		end
 
-		return AvatarAbilities.ReactiveSensor(read, wake, cleanup)
+		return AvatarAbilities.reactiveSensor(read, wake, cleanup)
 	end,
 }
 

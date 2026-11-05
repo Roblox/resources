@@ -20,6 +20,7 @@ local Drop: AvatarAbilities.AbilityDefinition = {
 		CustomIcon = "rbxassetid://71984145361462",
 		CustomIconActive = "rbxassetid://101534439290003",
 	},
+	ReadsSensors = { "Carrying" },
 	StartsWhen = Rule.All("Carrying", Rule.Not("DropDebounce")),
 	RunsWhile = Rule.All("Carrying"),
 	TimedLabels = {

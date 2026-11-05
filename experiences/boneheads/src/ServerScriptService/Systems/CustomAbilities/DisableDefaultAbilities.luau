@@ -1,6 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local AvatarAbilities = require("@rbx/AvatarAbilities")
+
 local Constants = require(ReplicatedStorage.Systems.CustomAbilities.Constants)
 
 local DISABLED_ABILITIES = { "Swimming", "Sprinting", "Crouching", "Climbing", "Slipping", "FallingDown", "GettingUp" }
@@ -63,6 +65,13 @@ function DisableDefaultAbilities.start()
 		return
 	end
 	started = true
+
+	if AvatarAbilities.waitForAbilityManager == nil then
+		error(
+			"AvatarAbilities.waitForAbilityManager is nil. Ensure the 'Beta Feature' flag 'AvatarAbilities Character Controller Library' is enabled (https://create.roblox.com/docs/characters/character-controller-library/quick-start)"
+		)
+		return
+	end
 
 	Players.PlayerAdded:Connect(onPlayerAdded)
 

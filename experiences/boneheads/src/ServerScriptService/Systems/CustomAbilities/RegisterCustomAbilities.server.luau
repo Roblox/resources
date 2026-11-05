@@ -13,39 +13,14 @@ local CUSTOM_ABILITIES = {
 	ReplicatedStorage.Systems.CustomAbilities.Wear.Wear,
 }
 
-local DELAY_TIME = 0.25
-
-local function addAbilityTask(character: Model, abilityModule: ModuleScript, inAttemptTime: number?, inError: any?)
-	if not character:IsDescendantOf(game) then
-		return
-	end
-
-	local totalAttemptTime = inAttemptTime or 0.0
-	if totalAttemptTime > Constants.WAIT_TIMEOUT_SECONDS then
-		if inError then
-			warn("addAbilityForCharacter Error:", inError)
-		else
-			warn("Failed to add ability " .. tostring(abilityModule))
-		end
-		return
-	end
-
-	local ok, errorOrResult = pcall(AvatarAbilities.addAbilityForCharacter, character, abilityModule)
-	if not ok then
-		task.delay(DELAY_TIME, addAbilityTask, character, abilityModule, totalAttemptTime + DELAY_TIME, errorOrResult)
-	end
-end
-
 local function onCharacterAdded(character: Model)
-	-- Note: There is no "AvatarAbility" readiness flag. Wait til ready (seemingly ready when "Dispatch" is avaialble, but additionally retry add ability calls if failed, to more reliably handle
-	local actor = character:WaitForChild(Constants.ABILITY_MANAGER_ACTOR_NAME, Constants.WAIT_TIMEOUT_SECONDS)
-	local _dispatch = actor and actor:WaitForChild(Constants.DISPATCH_NAME, Constants.WAIT_TIMEOUT_SECONDS)
-	if not actor then
+	local abilityManager = AvatarAbilities.waitForAbilityManager(character, Constants.WAIT_TIMEOUT_SECONDS)
+	if not abilityManager then
 		return
 	end
 
 	for _, abilityModule in CUSTOM_ABILITIES do
-		addAbilityTask(character, abilityModule)
+		abilityManager:AddAbility(abilityModule)
 	end
 end
 
@@ -54,6 +29,13 @@ local function onPlayerAdded(player: Player)
 	if player.Character then
 		task.spawn(onCharacterAdded, player.Character)
 	end
+end
+
+if AvatarAbilities.waitForAbilityManager == nil then
+	error(
+		"AvatarAbilities.waitForAbilityManager is nil. Ensure the 'Beta Feature' flag 'AvatarAbilities Character Controller Library' is enabled (https://create.roblox.com/docs/characters/character-controller-library/quick-start)"
+	)
+	return
 end
 
 Players.PlayerAdded:Connect(onPlayerAdded)

@@ -17,7 +17,7 @@ local Throw: AvatarAbilities.AbilityDefinition = {
 		CustomIcon = "rbxassetid://71984145361462",
 		CustomIconActive = "rbxassetid://101534439290003",
 	},
-
+	ReadsSensors = { "Carrying" },
 	State = {
 		chargeStart = Constants.INVALID_STATE_VALUE,
 	},
