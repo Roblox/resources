@@ -1,0 +1,13 @@
+local Constants = {
+	AIM_POINT_ATTRIBUTE = "aimPoint",
+	AIM_DISTANCE = 30,
+	STREAM_INTERVAL_SECONDS = 0.05,
+
+	AIM_COLOR_MIN = Color3.fromRGB(255, 255, 255),
+	AIM_COLOR_MAX = Color3.fromRGB(255, 70, 70),
+
+	CURSOR_START_HEIGHT_RATIO = 0.4,
+	CURSOR_DRAG_SENSITIVITY = 1.5,
+}
+
+return Constants

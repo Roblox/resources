@@ -1,0 +1,31 @@
+local Constants = {
+	HEAD_TAG = "BoneheadHead",
+	HEAD_PART_NAME = "Head",
+	HEAD_OWNER_ATTRIBUTE = "ownerUserId",
+	CRANIUM_JOINT = "CraniumJoint",
+	MAX_CRANIUM_ANGLE = 0.45,
+
+	CHARACTER_TEXT_ANCHOR_NAME = "CharacterLabelsAnchor",
+	NAME_LABEL_NAME = "NameLabel",
+	NAME_BILLBOARD_NAME = "NamePlateBillboardGui",
+	NAME_TEXT_COLOR = Color3.fromRGB(255, 255, 255),
+	NAME_VIEW_RANGE = 100,
+	CHARACTER_TEXT_VERTICAL_OFFSET = 0,
+	NAME_MAX_WIDTH = 250,
+	NAME_MAX_HEIGHT = 50,
+	NAME_TEXT_SIZE = 18,
+
+	VOICE_EFFECT_PARTICLE_EMITTER_NAME = "VoiceEffectParticleEmitter",
+	VOICE_EFFECT_PARTICLE_EMITTER_MIN_RATE = 20,
+	VOICE_EFFECT_PARTICLE_EMITTER_MAX_RATE = 50,
+	VOICE_EFFECT_PARTICLE_EMITTER_SIZE_SEQUENCE = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.75),
+		NumberSequenceKeypoint.new(0.5, 0.5),
+		NumberSequenceKeypoint.new(1, 0.25),
+	}),
+	VOICE_EFFECT_PARTICLE_EMITTER_SPEED = NumberRange.new(2),
+	VOICE_EFFECT_PARTICLE_EMITTER_SPREAD_ANGLE = Vector2.new(30, 50),
+	VOICE_EFFECT_PARTICLE_EMITTER_LIFETIME = NumberRange.new(1, 3.5),
+}
+
+return Constants

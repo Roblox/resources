@@ -1,0 +1,41 @@
+{
+  "name": "Boneheads",
+  "emitLegacyScripts": false,
+  "tree": {
+    "$className": "DataModel",
+    "Workspace": {
+      "$properties": {
+        "AuthorityMode": "Server",
+        "StreamingEnabled": true
+      }
+    },
+    "ReplicatedStorage": {
+      "$path": "src/ReplicatedStorage",
+      "Content": {
+        "$className": "Folder",
+        "$ignoreUnknownInstances": true,
+        "Models": {
+          "$className": "Folder",
+          "$ignoreUnknownInstances": true
+        }
+      }
+    },
+    "ServerScriptService": {
+      "$path": "src/ServerScriptService"
+    },
+    "ReplicatedFirst": {
+      "$path": "src/ReplicatedFirst",
+      "$ignoreUnknownInstances": true
+    },
+    "Players": {
+      "$properties": {
+        "CharacterAutoLoads": false
+      }
+    },
+    "TextChatService": {
+      "$properties": {
+        "ChatVersion": "TextChatService"
+      }
+    }
+  }
+}

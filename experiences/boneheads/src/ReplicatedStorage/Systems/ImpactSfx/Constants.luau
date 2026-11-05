@@ -1,0 +1,11 @@
+local Constants = {
+	IMPACT_SOUND_ATTRIBUTE = "impactSound",
+	DEFAULT_IMPACT_SOUND = "ItemImpact",
+	MIN_IMPACT_SPEED = 12,
+	MAX_IMPACT_SPEED = 60,
+	MIN_IMPACT_VOLUME = 0.15,
+	MAX_IMPACT_VOLUME = 1,
+	IMPACT_COOLDOWN_SECONDS = 0.15,
+}
+
+return Constants
